@@ -1,0 +1,14 @@
+Package: densityClust
+Type: Package
+Title: Clustering by fast search and find of density peaks
+Version: 0.1-0
+Date: 2014-06-30
+Author: Thomas Lin Pedersen
+Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
+Description: This package implement the clustering algorithm described by Alex
+    Rodriguez and Alessandro Laio (Science, 2014 vol. 344), along with tools to
+    inspect and visualize the results. The data input for the algorithm is a
+    distance matrix so the user is free to define arbitrary distance measures
+    that fits their data, or uses the dist() function provided by the stats
+    package.
+License: GPL (>= 2)
