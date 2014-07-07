@@ -247,7 +247,11 @@ plot.densityCluster <- function(x, ...) {
 plotMDS <- function (x, ...) {
     UseMethod("plotMDS", x)
 }
-plotMDS.densityCluster <- function(x) {
+#' @export
+#' 
+#' @noRd
+#' 
+plotMDS.densityCluster <- function(x, ...) {
     mds <- cmdscale(x$distance)
     plot(mds[,1], mds[,2], xlab='', ylab='', main='MDS plot of observations')
     if(!is.na(x$peaks[1])) {
@@ -316,7 +320,9 @@ findClusters <- function (x, ...) {
 #' 
 #' @param plot Logical. Should a decision plot be shown after cluster detection
 #' 
-findClusters.densityCluster <- function(x, rho, delta, plot=FALSE) {
+#' @export
+#' 
+findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, ...) {
     if(missing(rho) || missing(delta)) {
         x$peaks <- NA
         plot(x)
