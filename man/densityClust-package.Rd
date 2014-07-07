@@ -14,7 +14,7 @@ thresholds, without needing to recalculate everything.
 \details{
 Plotting
 
-Two types of plots are supported by this package, and both mimix the types of
+Two types of plots are supported by this package, and both mimics the types of
 plots used in the publication for the algorithm. The standard plot function
 produces a decision plot, with optional colouring of cluster peaks if these
 are assigned. Furthermore \code{\link{plotMDS}} performs a multidimensional
@@ -31,8 +31,17 @@ assignment for each observation based on a user defined rho and delta
 threshold. If the thresholds are not specified the user is able to supply
 them interactively by clicking on a decision plot.
 }
+\examples{
+irisDist <- dist(iris[,1:4])
+irisClust <- densityClust(irisDist, gaussian=TRUE)
+plot(irisClust) # Inspect clustering attributes to define thresholds
+
+irisClust <- findClusters(irisClust, rho=2, delta=2)
+plotMDS(irisClust)
+split(iris[,5], irisClust$clusters)
+}
 \references{
-Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492–1496. doi:10.1126/science.1242072
+Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
 }
 \seealso{
 \code{\link{densityClust}}, \code{\link{findClusters}}, \code{\link{plotMDS}}

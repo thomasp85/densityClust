@@ -23,7 +23,11 @@ algorithm suggests aiming for a neighbor rate between 1 and 2 percent, but
 also states that the algorithm is quite robust with regards to more extreme
 cases.
 }
+\examples{
+irisDist <- dist(iris[,1:4])
+estimateDc(irisDist)
+}
 \references{
-Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492–1496. doi:10.1126/science.1242072
+Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
 }
 

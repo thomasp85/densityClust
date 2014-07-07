@@ -17,6 +17,15 @@ according to cluster affiliation. Observations belonging to a cluster core is
 plotted with filled circles and observations belonging to the halo with
 hollow circles.
 }
+\examples{
+irisDist <- dist(iris[,1:4])
+irisClust <- densityClust(irisDist, gaussian=TRUE)
+plot(irisClust) # Inspect clustering attributes to define thresholds
+
+irisClust <- findClusters(irisClust, rho=2, delta=2)
+plotMDS(irisClust)
+split(iris[,5], irisClust$clusters)
+}
 \seealso{
 \code{\link{densityClust}}
 }

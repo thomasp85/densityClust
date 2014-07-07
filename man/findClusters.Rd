@@ -30,8 +30,17 @@ is missing the user is presented with a decision plot where they are able to
 click on the plot area to set the treshold. If either rho or delta is set,
 this takes presedence over the value found by clicking.
 }
+\examples{
+irisDist <- dist(iris[,1:4])
+irisClust <- densityClust(irisDist, gaussian=TRUE)
+plot(irisClust) # Inspect clustering attributes to define thresholds
+
+irisClust <- findClusters(irisClust, rho=2, delta=2)
+plotMDS(irisClust)
+split(iris[,5], irisClust$clusters)
+}
 \references{
-Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492–1496. doi:10.1126/science.1242072
+Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
 }
 \seealso{
 \code{\link{findClusters}}

@@ -9,7 +9,7 @@
 #' 
 #' Plotting
 #' 
-#' Two types of plots are supported by this package, and both mimix the types of
+#' Two types of plots are supported by this package, and both mimics the types of
 #' plots used in the publication for the algorithm. The standard plot function
 #' produces a decision plot, with optional colouring of cluster peaks if these 
 #' are assigned. Furthermore \code{\link{plotMDS}} performs a multidimensional 
@@ -26,7 +26,14 @@
 #' threshold. If the thresholds are not specified the user is able to supply 
 #' them interactively by clicking on a decision plot.
 #' 
-#' @example
+#' @examples
+#' irisDist <- dist(iris[,1:4])
+#' irisClust <- densityClust(irisDist, gaussian=TRUE)
+#' plot(irisClust) # Inspect clustering attributes to define thresholds
+#' 
+#' irisClust <- findClusters(irisClust, rho=2, delta=2)
+#' plotMDS(irisClust)
+#' split(iris[,5], irisClust$clusters)
 #' 
 #' @seealso \code{\link{densityClust}}, \code{\link{findClusters}}, \code{\link{plotMDS}}
 #' 
@@ -114,6 +121,10 @@ distanceToPeak <- function(distance, rho) {
 #' 
 #' @return A numeric value giving the estimated distance cutoff value
 #' 
+#' @examples
+#' irisDist <- dist(iris[,1:4])
+#' estimateDc(irisDist)
+#' 
 #' @references Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
 #' 
 #' @export
@@ -173,6 +184,15 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #' 
 #' @return A densityCluster object. See details for a description.
 #' 
+#' @examples
+#' irisDist <- dist(iris[,1:4])
+#' irisClust <- densityClust(irisDist, gaussian=TRUE)
+#' plot(irisClust) # Inspect clustering attributes to define thresholds
+#' 
+#' irisClust <- findClusters(irisClust, rho=2, delta=2)
+#' plotMDS(irisClust)
+#' split(iris[,5], irisClust$clusters)
+#' 
 #' @seealso \code{\link{estimateDc}}, \code{\link{findClusters}}
 #' 
 #' @references Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
@@ -210,6 +230,15 @@ plot.densityCluster <- function(x, ...) {
 #' @param x A densityCluster object as produced by \code{\link{densityClust}}
 #' 
 #' @param ... Additional parameters. Currently ignored
+#' 
+#' @examples
+#' irisDist <- dist(iris[,1:4])
+#' irisClust <- densityClust(irisDist, gaussian=TRUE)
+#' plot(irisClust) # Inspect clustering attributes to define thresholds
+#' 
+#' irisClust <- findClusters(irisClust, rho=2, delta=2)
+#' plotMDS(irisClust)
+#' split(iris[,5], irisClust$clusters)
 #' 
 #' @seealso \code{\link{densityClust}}
 #' 
@@ -260,6 +289,15 @@ print.densityCluster <- function(x, ...) {
 #' @param ... Additional parameters passed on to \code{\link{findClusters.densityCluster}}
 #' 
 #' @return A densityCluster object with clusters assigned to all observations
+#' 
+#' @examples
+#' irisDist <- dist(iris[,1:4])
+#' irisClust <- densityClust(irisDist, gaussian=TRUE)
+#' plot(irisClust) # Inspect clustering attributes to define thresholds
+#' 
+#' irisClust <- findClusters(irisClust, rho=2, delta=2)
+#' plotMDS(irisClust)
+#' split(iris[,5], irisClust$clusters)
 #' 
 #' @seealso \code{\link{findClusters}}
 #' 
