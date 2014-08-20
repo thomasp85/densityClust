@@ -1,46 +1,40 @@
-#' Detect clusters in a densityCluster obejct
+#' Calculate clusters in a densityCluster object
 #' 
-#' This function uses the supplied rho and delta thresholds to detect cluster
-#' peaks and assign the rest of the observations to one of these clusters. 
-#' Furthermore core/halo status is calculated. If either rho or delta threshold
-#' is missing the user is presented with a decision plot where they are able to
-#' click on the plot area to set the treshold. If either rho or delta is set, 
-#' this takes presedence over the value found by clicking.
+#' This function uses the supplied \eqn{\rho} and \eqn{\delta} thresholds to 
+#' calculate cluster centers and assigns the rest of the points to one of these 
+#' clusters, designating these points as belonging to either the core or the 
+#' halo of the cluster. If either of the \eqn{\rho} or \eqn{\delta} thresholds 
+#' are missing the user is presented with a decision plot where they are able to
+#' click on the plot area to set the threshold. If either of the \eqn{\rho} or 
+#' \eqn{\delta} thresholds is passed as an argument then this takes precedence
+#' over the value set by clicking.
 #' 
-#' @param x A densityCluster object as produced by \code{\link{dclust}}
-#' 
-#' @param ... Additional parameters passed on to \code{\link{findClusters.densityCluster}}
-#' 
-#' @return A densityCluster object with clusters assigned to all observations
-#' 
+#' @param x a \code{densityCluster} object as produced by \code{\link{dclust}}.
+#'   
+#' @param ... additional parameters passed on to 
+#'   \code{\link{findClusters.densityCluster}}.
+#'   
+#' @return A \code{densityCluster} object with clusters assigned to all 
+#'   observations.
+#'   
 #' @examples
 #' irisDist <- dist(iris[,1:4])
 #' irisClust <- dclust(irisDist, gaussian=TRUE)
-#' plot(irisClust) # Inspect clustering attributes to define thresholds
-#' 
 #' irisClust <- findClusters(irisClust, rho=2, delta=2)
-#' plotMDS(irisClust)
-#' split(iris[,5], irisClust$clusters)
-#' 
-#' @seealso \code{\link{findClusters}}
-#' 
-#' @references Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
-#' 
 #' @export
-#' 
 findClusters <- function (x, ...) {
   UseMethod("findClusters", x)
 }
+
+
 #' @rdname findClusters
-#' 
-#' @param rho The threshold for local density when detecting cluster peaks
-#' 
-#' @param delta The threshold for minimum distance to higher density when detecting cluster peaks
-#' 
-#' @param plot Logical. Should a decision plot be shown after cluster detection
-#' 
+#'   
+#' @param rho the threshold for local density.
+#' @param delta the threshold for minimum distance to higher density.
+#' @param plot logical indicating whether a decision plot should be shown after
+#'   cluster calculation.
+#'   
 #' @export
-#' 
 findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, ...) {
   # Detect cluster peaks
   if(missing(rho) || missing(delta)) {
@@ -85,46 +79,44 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, ...) {
   x
 }
 
+
 #' Extract cluster membership from a densityCluster object
 #' 
-#' This function allows the user to extract the cluster membership of all the
-#' observations in the given densityCluster object. The output can be formatted 
-#' in two ways as described below. Halo observations can be chosen to be removed
-#' from the output.
+#' This function allows the user to extract the cluster membership of all the 
+#' observations in the given \code{densityCluster} object. The output can be
+#' formatted in two ways as described below. Halo observations can optionally be
+#' removed from the output.
 #' 
-#' @details
-#' Two formats for the output are available. Either a vector of integers 
-#' denoting for each observation, which cluster the observation belongs to. If 
-#' halo observations are removed, these are set to NA. The second format is a 
-#' list with a vector for each group containing the index for the member 
-#' observations in the group. If halo observations are removed their indexes are
-#' omitted. The list format correspond to the following transform of the vector 
-#' format \code{split(1:length(clusters), clusters)}, where \code{clusters} are 
+#' @details Two formats for the output are available, with the first being a vector of
+#' integers denoting for each point which cluster the point belongs
+#' to. If halo observations are removed, these are set to NA. The second format
+#' is a list with a vector for each group containing the index for the member 
+#' points in the group. If halo points are removed their indexes are
+#' omitted. The list format corresponds to the transformation of the vector 
+#' format \code{split(1:length(clusters), clusters)}, where \code{clusters} is 
 #' the cluster information in vector format.
 #' 
-#' @param x The densityCluster object. \code{\link{findClusters}} must have
-#' been performed prior to this call to avoid throwing an error.
-#' 
-#' @param ... Currently ignored
-#' 
+#' @param x the \code{densityCluster} object to inspect.
+#' @param ... extra arguments to pass on.
+#'   
 #' @return A vector or list with cluster memberships for the observations in the
-#' initial distance matrix
-#' 
+#'   initial distance matrix
+#'   
 #' @export
 #' 
 clusters <- function (x, ...) {
   UseMethod("clusters", x)
 }
+
+
 #' @rdname clusters
 #' 
-#' @param as.list Should the output be in the list format. Defaults to FALSE
-#' 
-#' @param halo.rm Logical. should halo observations be removed. Defaults to TRUE
+#' @param as.list logical indicating that the output should be in list format.
+#' @param halo.rm logical indicating that halo points should be removed.
 #' 
 #' @export
-#' 
 clusters.densityCluster <- function(x, as.list=FALSE, halo.rm=TRUE, ...) {
-  if(!clustered(x)) stop('x must be clustered prior to cluster extraction')
+  if(!is.clustered(x)) stop('Input data must be clustered prior to cluster extraction!')
   res <- x$clusters
   if(halo.rm) {
     res[x$halo] <- NA
@@ -135,35 +127,31 @@ clusters.densityCluster <- function(x, as.list=FALSE, halo.rm=TRUE, ...) {
   res
 }
 
-#' Check whether a densityCluster object have been clustered
+
+#' Check whether a densityCluster object has been clustered
 #' 
-#' This function checks whether \code{\link{findClusters}} has been performed on
-#' the given object and returns a boolean depending on the outcome
-#' 
-#' @param x A densityCluster object
-#' 
-#' @return TRUE if \code{\link{findClusters}} have been performed, otherwise 
-#' FALSE
-#' 
+#' @param x the \code{densityCluster} object to check.
+#'   
+#' @return \code{TRUE} if the object has been clustered, otherwise \code{FALSE}.
+#'   
 #' @export
-#' 
-clustered <- function (x) {
-  UseMethod("clustered", x)
+is.clustered <- function (x) {
+  UseMethod("is.clustered", x)
 }
-#' @rdname clustered
-#' 
+
+
+#' @rdname is.clustered
 #' @export
-#' 
-clustered.densityCluster <- function(x) {
+is.clustered.densityCluster <- function(x) {
   !any(is.na(x$peaks[1]), is.na(x$clusters[1]), is.na(x$halo[1]))
 }
+
 
 #' Extract labels
 #' 
 #' @noRd
 #' 
 #' @export
-#' 
 labels.densityCluster <- function(object, ...) {
   labels(object$distance)
 }
