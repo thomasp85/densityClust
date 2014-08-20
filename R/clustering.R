@@ -10,9 +10,7 @@
 #' over the value set by clicking.
 #' 
 #' @param x a \code{densityCluster} object as produced by \code{\link{dclust}}.
-#'   
-#' @param ... additional parameters passed on to 
-#'   \code{\link{findClusters.densityCluster}}.
+#' @param ... additional parameters passed to pass on.
 #'   
 #' @return A \code{densityCluster} object with clusters assigned to all 
 #'   observations.
@@ -131,7 +129,7 @@ clusters.densityCluster <- function(x, as.list=FALSE, halo.rm=TRUE, ...) {
 #' Check whether a densityCluster object has been clustered
 #' 
 #' @param x the \code{densityCluster} object to check.
-#'   
+#'
 #' @return \code{TRUE} if the object has been clustered, otherwise \code{FALSE}.
 #'   
 #' @export

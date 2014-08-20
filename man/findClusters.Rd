@@ -11,8 +11,7 @@ findClusters(x, ...)
 \arguments{
 \item{x}{a \code{densityCluster} object as produced by \code{\link{dclust}}.}
 
-\item{...}{additional parameters passed on to
-  \code{\link{findClusters.densityCluster}}.}
+\item{...}{additional parameters passed to pass on.}
 
 \item{rho}{the threshold for local density.}
 
