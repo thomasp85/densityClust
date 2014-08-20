@@ -9,33 +9,32 @@ clusters(x, ...)
 \method{clusters}{densityCluster}(x, as.list = FALSE, halo.rm = TRUE, ...)
 }
 \arguments{
-\item{x}{The densityCluster object. \code{\link{findClusters}} must have
-been performed prior to this call to avoid throwing an error.}
+\item{x}{the \code{densityCluster} object to inspect.}
 
-\item{...}{Currently ignored}
+\item{...}{extra arguments to pass on.}
 
-\item{as.list}{Should the output be in the list format. Defaults to FALSE}
+\item{as.list}{logical indicating that the output should be in list format.}
 
-\item{halo.rm}{Logical. should halo observations be removed. Defaults to TRUE}
+\item{halo.rm}{logical indicating that halo points should be removed.}
 }
 \value{
 A vector or list with cluster memberships for the observations in the
-initial distance matrix
+  initial distance matrix
 }
 \description{
 This function allows the user to extract the cluster membership of all the
-observations in the given densityCluster object. The output can be formatted
-in two ways as described below. Halo observations can be chosen to be removed
-from the output.
+observations in the given \code{densityCluster} object. The output can be
+formatted in two ways as described below. Halo observations can optionally be
+removed from the output.
 }
 \details{
-Two formats for the output are available. Either a vector of integers
-denoting for each observation, which cluster the observation belongs to. If
-halo observations are removed, these are set to NA. The second format is a
-list with a vector for each group containing the index for the member
-observations in the group. If halo observations are removed their indexes are
-omitted. The list format correspond to the following transform of the vector
-format \code{split(1:length(clusters), clusters)}, where \code{clusters} are
+Two formats for the output are available, with the first being a vector of
+integers denoting for each point which cluster the point belongs
+to. If halo observations are removed, these are set to NA. The second format
+is a list with a vector for each group containing the index for the member
+points in the group. If halo points are removed their indexes are
+omitted. The list format corresponds to the transformation of the vector
+format \code{split(1:length(clusters), clusters)}, where \code{clusters} is
 the cluster information in vector format.
 }
 
