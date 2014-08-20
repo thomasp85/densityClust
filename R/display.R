@@ -16,20 +16,20 @@ plot.densityCluster <- function(x, ...) {
 #' plotted with filled circles and observations belonging to the halo with
 #' hollow circles.
 #' 
-#' @param x A densityCluster object as produced by \code{\link{densityClust}}
+#' @param x A densityCluster object as produced by \code{\link{dclust}}
 #' 
 #' @param ... Additional parameters. Currently ignored
 #' 
 #' @examples
 #' irisDist <- dist(iris[,1:4])
-#' irisClust <- densityClust(irisDist, gaussian=TRUE)
+#' irisClust <- dclust(irisDist, gaussian=TRUE)
 #' plot(irisClust) # Inspect clustering attributes to define thresholds
 #' 
 #' irisClust <- findClusters(irisClust, rho=2, delta=2)
 #' plotMDS(irisClust)
 #' split(iris[,5], irisClust$clusters)
 #' 
-#' @seealso \code{\link{densityClust}}
+#' @seealso \code{\link{dclust}}
 #' 
 #' @export
 #' 

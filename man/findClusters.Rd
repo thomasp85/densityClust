@@ -9,7 +9,7 @@ findClusters(x, ...)
 \method{findClusters}{densityCluster}(x, rho, delta, plot = FALSE, ...)
 }
 \arguments{
-\item{x}{A densityCluster object as produced by \code{\link{densityClust}}}
+\item{x}{A densityCluster object as produced by \code{\link{dclust}}}
 
 \item{...}{Additional parameters passed on to \code{\link{findClusters.densityCluster}}}
 
@@ -32,7 +32,7 @@ this takes presedence over the value found by clicking.
 }
 \examples{
 irisDist <- dist(iris[,1:4])
-irisClust <- densityClust(irisDist, gaussian=TRUE)
+irisClust <- dclust(irisDist, gaussian=TRUE)
 plot(irisClust) # Inspect clustering attributes to define thresholds
 
 irisClust <- findClusters(irisClust, rho=2, delta=2)

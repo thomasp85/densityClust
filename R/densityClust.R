@@ -139,7 +139,7 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #' 
 #' @examples
 #' irisDist <- dist(iris[,1:4])
-#' irisClust <- densityClust(irisDist, gaussian=TRUE)
+#' irisClust <- dclust(irisDist, gaussian=TRUE)
 #' plot(irisClust) # Inspect clustering attributes to define thresholds
 #' 
 #' irisClust <- findClusters(irisClust, rho=2, delta=2)
@@ -152,7 +152,7 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #' 
 #' @export
 #' 
-densityClust <- function(distance, dc, gaussian=FALSE) {
+dclust <- function(distance, dc, gaussian=FALSE) {
     if(missing(dc)) {
         dc <- estimateDc(distance)
     }

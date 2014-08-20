@@ -6,7 +6,7 @@
 plotMDS(x, ...)
 }
 \arguments{
-\item{x}{A densityCluster object as produced by \code{\link{densityClust}}}
+\item{x}{A densityCluster object as produced by \code{\link{dclust}}}
 
 \item{...}{Additional parameters. Currently ignored}
 }
@@ -19,7 +19,7 @@ hollow circles.
 }
 \examples{
 irisDist <- dist(iris[,1:4])
-irisClust <- densityClust(irisDist, gaussian=TRUE)
+irisClust <- dclust(irisDist, gaussian=TRUE)
 plot(irisClust) # Inspect clustering attributes to define thresholds
 
 irisClust <- findClusters(irisClust, rho=2, delta=2)
@@ -27,6 +27,6 @@ plotMDS(irisClust)
 split(iris[,5], irisClust$clusters)
 }
 \seealso{
-\code{\link{densityClust}}
+\code{\link{dclust}}
 }
 

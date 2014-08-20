@@ -23,17 +23,17 @@ are assigned observations are coloured according to their assignment.
 
 Cluster detection
 
-The two main functions for this package are \code{\link{densityClust}} and
+The two main functions for this package are \code{\link{dclust}} and
 \code{\link{findClusters}}. The former takes a distance matrix and optionally
 a distance cutoff and calculates rho and delta for each observation. The
-latter takes the output of \code{\link{densityClust}} and make cluster
+latter takes the output of \code{\link{dclust}} and make cluster
 assignment for each observation based on a user defined rho and delta
 threshold. If the thresholds are not specified the user is able to supply
 them interactively by clicking on a decision plot.
 }
 \examples{
 irisDist <- dist(iris[,1:4])
-irisClust <- densityClust(irisDist, gaussian=TRUE)
+irisClust <- dclust(irisDist, gaussian=TRUE)
 plot(irisClust) # Inspect clustering attributes to define thresholds
 
 irisClust <- findClusters(irisClust, rho=2, delta=2)
@@ -44,6 +44,6 @@ split(iris[,5], irisClust$clusters)
 Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
 }
 \seealso{
-\code{\link{densityClust}}, \code{\link{findClusters}}, \code{\link{plotMDS}}
+\code{\link{dclust}}, \code{\link{findClusters}}, \code{\link{plotMDS}}
 }
 

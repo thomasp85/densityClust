@@ -7,7 +7,7 @@
 #' click on the plot area to set the treshold. If either rho or delta is set, 
 #' this takes presedence over the value found by clicking.
 #' 
-#' @param x A densityCluster object as produced by \code{\link{densityClust}}
+#' @param x A densityCluster object as produced by \code{\link{dclust}}
 #' 
 #' @param ... Additional parameters passed on to \code{\link{findClusters.densityCluster}}
 #' 
@@ -15,7 +15,7 @@
 #' 
 #' @examples
 #' irisDist <- dist(iris[,1:4])
-#' irisClust <- densityClust(irisDist, gaussian=TRUE)
+#' irisClust <- dclust(irisDist, gaussian=TRUE)
 #' plot(irisClust) # Inspect clustering attributes to define thresholds
 #' 
 #' irisClust <- findClusters(irisClust, rho=2, delta=2)
