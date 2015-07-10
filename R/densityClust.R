@@ -135,7 +135,7 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
     dc <- min(distance)
     dcMod <- as.numeric(summary(distance)['Median']*0.01)
     while(TRUE) {
-        neighborRate <- mean((apply(comb < dc, 1, sum)-1)/size)
+        neighborRate <- ((sum(comb < dc) / nrow(comb)) - 1) / size
         if(neighborRate > neighborRateLow && neighborRate < neighborRateHigh) break
         if(neighborRate > neighborRateHigh) {
             dc <- dc - dcMod
