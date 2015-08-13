@@ -42,6 +42,8 @@
 #' @docType package
 #' @name densityClust-package
 #' 
+#' @useDynLib densityClust
+#' @importFrom Rcpp sourceCpp
 NULL
 
 #' Computes the local density of points in a distance matrix
@@ -65,18 +67,19 @@ NULL
 #' @noRd
 #' 
 localDensity <- function(distance, dc, gaussian=FALSE) {
-    comb <- as.matrix(distance)
-    if(gaussian) {
-        res <- apply(exp(-(comb/dc)^2), 1, sum)-1
-    } else {
-        res <- apply(comb < dc, 1, sum)-1
-    }
-    if(is.null(attr(distance, 'Labels'))) {
-        names(res) <- NULL
-    } else {
-        names(res) <- attr(distance, 'Labels')
-    }
-    res
+   # These implementations are faster by virtue of being written in C++
+   # They also avoid the need to convert `distance` to a matrix. 
+   if(gaussian) {
+      res <- gaussianLocalDensity(distance, attr(distance, "Size"), dc)
+   } else {
+      res <- nonGaussianLocalDensity(distance, attr(distance, "Size"), dc)
+   }
+   if(is.null(attr(distance, 'Labels'))) {
+      names(res) <- NULL
+   } else {
+      names(res) <- attr(distance, 'Labels')
+   }
+   res
 }
 #' Calculate distance to closest observation of higher density
 #' 
@@ -92,17 +95,11 @@ localDensity <- function(distance, dc, gaussian=FALSE) {
 #' @noRd
 #' 
 distanceToPeak <- function(distance, rho) {
-    comb <- as.matrix(distance)
-    res <- sapply(1:length(rho), function(i) {
-        peaks <- comb[rho>rho[i], i]
-        if(length(peaks) == 0) {
-            max(comb[,i])
-        } else {
-            min(peaks)
-        }
-    })
-    names(res) <- names(rho)
-    res
+   # This implementation is faster by virtue of being written in C++.
+   # It also avoids the need to convert `distance` to a matrix. 
+   res <- distanceToPeakCpp(distance, rho);
+   names(res) <- names(rho)
+   res
 }
 #' Estimate the distance cutoff for a specified neighbor rate
 #' 
@@ -130,21 +127,31 @@ distanceToPeak <- function(distance, rho) {
 #' @export
 #' 
 estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
-    comb <- as.matrix(distance)
-    size <- attr(distance, 'Size')
-    dc <- min(distance)
-    dcMod <- as.numeric(summary(distance)['Median']*0.01)
-    while(TRUE) {
-        neighborRate <- ((sum(comb < dc) / nrow(comb)) - 1) / size
-        if(neighborRate > neighborRateLow && neighborRate < neighborRateHigh) break
-        if(neighborRate > neighborRateHigh) {
-            dc <- dc - dcMod
-            dcMod <- dcMod/2
-        }
-        dc <- dc + dcMod
-    }
-    cat('Distance cutoff calculated to', dc, '\n')
-    dc
+   # neighborRate = average of number of elements per row that are less than dc
+   # dc minus 1 divided by size.
+   
+   # This implementation avoids converting `distance` to a matrix. The matrix is
+   # symmetrical, so doubling the result from `distance` (half of the matrix) is
+   # equivalent. The diagonal of the matrix will always be 0, so as long as dc 
+   # is greater than 0, we add 1 for every element of the diagonal, which is
+   # the same as size
+   size <- attr(distance, 'Size')
+   dc <- min(distance)
+   dcMod <- as.numeric(summary(distance)['Median']*0.01)
+   while(TRUE) {
+      # neighborRate = average of number of elements of comb per row that are 
+      # less than dc minus 1 divided by size. Below implemented to use the dist
+      # object rather than the matrix
+      neighborRate <- (((sum(distance < dc) * 2 + (if (0 < dc) size)) / size - 1)) / size
+      if(neighborRate >= neighborRateLow && neighborRate <= neighborRateHigh) break
+      if(neighborRate > neighborRateHigh) {
+         dc <- dc - dcMod
+         dcMod <- dcMod/2
+      }
+      dc <- dc + dcMod
+   }
+   cat('Distance cutoff calculated to', dc, '\n')
+   dc
 }
 #' Calculate clustering attributes based on the densityClust algorithm
 #' 
