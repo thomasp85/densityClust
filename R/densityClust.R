@@ -127,32 +127,42 @@ distanceToPeak <- function(distance, rho) {
 #' @export
 #' 
 estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
-   # neighborRate = average of number of elements per row that are less than dc
-   # dc minus 1 divided by size.
+   # This implementation uses binary search instead of linear search.
    
-   # This implementation avoids converting `distance` to a matrix. The matrix is
-   # symmetrical, so doubling the result from `distance` (half of the matrix) is
-   # equivalent. The diagonal of the matrix will always be 0, so as long as dc 
-   # is greater than 0, we add 1 for every element of the diagonal, which is
-   # the same as size
    size <- attr(distance, 'Size')
-   dc <- min(distance)
-   dcMod <- as.numeric(summary(distance)['Median']*0.01)
+   # If size is greater than 448, there will be >100000 elements in the distance
+   # object. Subsampling to 100000 elements will speed performance for very 
+   # large dist objects while retaining good accuracy in estimating the cutoff
+   if(size > 448) {
+      distance <- distance[sample(1:length(distance), 100128)]
+      size <- 448
+   }
+   
+   low <- min(distance)
+   high <- max(distance)
+   dc <- 0
    while(TRUE) {
+      dc <- (low + high) / 2
       # neighborRate = average of number of elements of comb per row that are 
-      # less than dc minus 1 divided by size. Below implemented to use the dist
-      # object rather than the matrix
+      # less than dc minus 1 divided by size.
+      # This implementation avoids converting `distance` to a matrix. The matrix is
+      # symmetrical, so doubling the result from `distance` (half of the matrix) is
+      # equivalent. The diagonal of the matrix will always be 0, so as long as dc 
+      # is greater than 0, we add 1 for every element of the diagonal, which is
+      # the same as size
       neighborRate <- (((sum(distance < dc) * 2 + (if (0 <= dc) size)) / size - 1)) / size
       if(neighborRate >= neighborRateLow && neighborRate <= neighborRateHigh) break
-      if(neighborRate > neighborRateHigh) {
-         dc <- dc - dcMod
-         dcMod <- dcMod/2
+      
+      if(neighborRate < neighborRateLow) {
+         low <- dc
+      } else {
+         high <- dc
       }
-      dc <- dc + dcMod
    }
    cat('Distance cutoff calculated to', dc, '\n')
    dc
 }
+
 #' Calculate clustering attributes based on the densityClust algorithm
 #' 
 #' This function takes a distance matrix and optionally a distance cutoff and 
