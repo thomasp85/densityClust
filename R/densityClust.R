@@ -142,7 +142,7 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
       # neighborRate = average of number of elements of comb per row that are 
       # less than dc minus 1 divided by size. Below implemented to use the dist
       # object rather than the matrix
-      neighborRate <- (((sum(distance < dc) * 2 + (if (0 < dc) size)) / size - 1)) / size
+      neighborRate <- (((sum(distance < dc) * 2 + (if (0 <= dc) size)) / size - 1)) / size
       if(neighborRate >= neighborRateLow && neighborRate <= neighborRateHigh) break
       if(neighborRate > neighborRateHigh) {
          dc <- dc - dcMod
