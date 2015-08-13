@@ -19,11 +19,12 @@ save(densityClustReference, file = "tests/testthat/testdata/densityClustReferenc
 estimateDcReference <- lapply(dists, estimateDc)
 save(estimateDcReference, file = "tests/testthat/testdata/estimateDcReference.RData")
 
-localDensityReference <- Map(densityClust:::localDensity, dists, estimateDcReference)
-save(localDensityReference, file = "tests/testthat/testdata/localDensityReference.RData")
-
-distanceToPeakReference <- Map(densityClust:::distanceToPeak, dists, localDensityReference)
-save(distanceToPeakReference, file = "tests/testthat/testdata/distanceToPeakReference.RData")
+# convenient for debugging, but calling non-exported functions not allowed in CRAN
+# localDensityReference <- Map(densityClust:::localDensity, dists, estimateDcReference)
+# save(localDensityReference, file = "tests/testthat/testdata/localDensityReference.RData")
+# 
+# distanceToPeakReference <- Map(densityClust:::distanceToPeak, dists, localDensityReference)
+# save(distanceToPeakReference, file = "tests/testthat/testdata/distanceToPeakReference.RData")
 
 # Gaussian
 gaussianDensityClustReference <- lapply(dists, FUN = function(x) densityClust(x, gaussian = TRUE))
