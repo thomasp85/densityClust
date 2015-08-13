@@ -10,41 +10,37 @@ dists <- list(
 
 context("Reference implementation")
 
-load("testdata/densityClustReference.RData")
+# get dcs and reference targets
+source("generateReference.R")
+
+dcComparison <- simplify2array(Map(function(x, y) abs(1 - x / y) <= 0.15, dcs, referenceDcs))
+test_that("Reference DCs and new DCs are within 15% of each other", {
+   expect_true(all(dcComparison))
+})
+
 densityClustNewImp <- lapply(dists, densityClust)
 test_that("Test equivalence to reference implementation of densityClust", {
-   expect_identical(densityClustReference, densityClustNewImp)   
-})
-
-load("testdata/estimateDcReference.RData")
-estimateDcNewImp <- lapply(dists, estimateDc)
-test_that("Test equivalence to reference implementation of estimateDc", {
-   expect_identical(estimateDcReference, estimateDcNewImp)   
+   expect_equal(densityClustReference, densityClustNewImp)   
 })
 
 # convenient for debugging, but calling non-exported functions not allowed in CRAN
-# load("testdata/localDensityReference.RData")
 # localDensityNewImp <- Map(densityClust:::localDensity, dists, estimateDcNewImp)
 # test_that("Test equivalence to reference implementation of localDensity", {
-#    expect_identical(localDensityReference, localDensityNewImp)
+#    expect_equal(localDensityReference, localDensityNewImp)
 # })
 # 
-# load("testdata/distanceToPeakReference.RData")
 # distanceToPeakNewImp <- Map(densityClust:::distanceToPeak, dists, localDensityNewImp)
-# test_that("Test equivalence to reference implementation of distanceToPeak", {
-#    expect_identical(distanceToPeakReference, distanceToPeakNewImp)
+# test_that("Test equivalence to reference implementation of distanc eToPeak", {
+#    expect_equal(distanceToPeakReference, distanceToPeakNewImp)
 # })
 
-load("testdata/gaussianDensityClustReference.RData")
 gaussianDensityClustNewImp <- lapply(dists, FUN = function(x) densityClust(x, gaussian = TRUE))
 test_that("Test equivalence to reference implementation of gaussianDensityClust", {
-   expect_identical(gaussianDensityClustReference, gaussianDensityClustNewImp)   
+   expect_equal(gaussianDensityClustReference, gaussianDensityClustNewImp)   
 })
 
 # convenient for debugging, but calling non-exported functions not allowed in CRAN
-# load("testdata/gaussianLocalDensityReference.RData")
 # gaussianLocalDensityNewImp <- Map(f = function(x, y) densityClust:::localDensity(x, y, gaussian = TRUE), dists, estimateDcReference)
 # test_that("Test equivalence to reference implementation of localDensity", {
-#    expect_identical(gaussianLocalDensityReference, gaussianLocalDensityNewImp)
+#    expect_equal(gaussianLocalDensityReference, gaussianLocalDensityNewImp)
 # })
-
