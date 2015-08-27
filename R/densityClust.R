@@ -134,7 +134,7 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
    # object. Subsampling to 100000 elements will speed performance for very 
    # large dist objects while retaining good accuracy in estimating the cutoff
    if(size > 448) {
-      distance <- distance[sample(1:length(distance), 100128)]
+      distance <- distance[sample.int(length(distance), 100128)]
       size <- 448
    }
    
