@@ -31,15 +31,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // nonGaussianLocalDensity
-NumericVector nonGaussianLocalDensity(NumericVector distance, int size, double dc);
-RcppExport SEXP densityClust_nonGaussianLocalDensity(SEXP distanceSEXP, SEXP sizeSEXP, SEXP dcSEXP) {
+NumericVector nonGaussianLocalDensity(NumericVector distance, int nrow, double dc);
+RcppExport SEXP densityClust_nonGaussianLocalDensity(SEXP distanceSEXP, SEXP nrowSEXP, SEXP dcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< NumericVector >::type distance(distanceSEXP);
-    Rcpp::traits::input_parameter< int >::type size(sizeSEXP);
+    Rcpp::traits::input_parameter< int >::type nrow(nrowSEXP);
     Rcpp::traits::input_parameter< double >::type dc(dcSEXP);
-    __result = Rcpp::wrap(nonGaussianLocalDensity(distance, size, dc));
+    __result = Rcpp::wrap(nonGaussianLocalDensity(distance, nrow, dc));
     return __result;
 END_RCPP
 }

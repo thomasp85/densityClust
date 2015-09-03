@@ -9,7 +9,7 @@ gaussianLocalDensity <- function(distance, nrow, dc) {
     .Call('densityClust_gaussianLocalDensity', PACKAGE = 'densityClust', distance, nrow, dc)
 }
 
-nonGaussianLocalDensity <- function(distance, size, dc) {
-    .Call('densityClust_nonGaussianLocalDensity', PACKAGE = 'densityClust', distance, size, dc)
+nonGaussianLocalDensity <- function(distance, nrow, dc) {
+    .Call('densityClust_nonGaussianLocalDensity', PACKAGE = 'densityClust', distance, nrow, dc)
 }
 
