@@ -12,3 +12,6 @@ Description: This package implement the clustering algorithm described by Alex
     that fits their data, or uses the dist() function provided by the stats
     package.
 License: GPL (>= 2)
+Suggests: testthat
+LinkingTo: Rcpp
+Imports: Rcpp
