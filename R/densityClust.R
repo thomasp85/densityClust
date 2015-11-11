@@ -96,11 +96,12 @@ distanceToPeak <- function(distance, rho) {
     res <- sapply(1:length(rho), function(i) {
         peaks <- comb[rho>rho[i], i]
         if(length(peaks) == 0) {
-            max(comb[,i])
+            NA
         } else {
             min(peaks)
         }
     })
+    res[is.na(res)] <- max(res, na.rm=TRUE)
     names(res) <- names(rho)
     res
 }
@@ -129,7 +130,7 @@ distanceToPeak <- function(distance, rho) {
 #' 
 #' @export
 #' 
-estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
+estimateDc <- function(distance, neighborRateLow=0.02, neighborRateHigh=0.03) {
     comb <- as.matrix(distance)
     size <- attr(distance, 'Size')
     dc <- min(distance)
@@ -357,7 +358,7 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, ...) {
     # Calculate core/halo status of observation
     border <- rep(0, length(x$peaks))
     for(i in 1:length(x$peaks)) {
-        averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], function(X, Y){X})
+        averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2
         index <- comb[cluster == i, cluster != i] <= x$dc
         if(any(index)) border[i] <- max(averageRho[index])
     }
