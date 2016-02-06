@@ -1,5 +1,6 @@
 Clustering by fast search and find of density peaks
 ============
+![](http://www.r-pkg.org/badges/version/densityClust) ![](http://cranlogs.r-pkg.org/badges/grand-total/densityClust) [![Build Status](https://travis-ci.org/thomasp85/densityClust.svg?branch=master)](https://travis-ci.org/thomasp85/densityClust)
 
 This package implement the clustering algorithm described by Alex Rodriguez and Alessandro Laio (2014). It provides the user with tools for generating the initial rho and delta values for each observation as well as using these to assign observations to clusters. This is done in two passes so the user is free to reassign observations to clusters using a new set of rho and delta thresholds, without needing to recalculate everything.
 
