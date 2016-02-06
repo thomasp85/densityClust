@@ -1,7 +1,7 @@
 Package: densityClust
 Type: Package
-Title: Clustering by fast search and find of density peaks
-Version: 0.2.0
+Title: Clustering by Fast Search and Find of Density Peaks
+Version: 0.2.1
 Date: 2016-02-06
 Authors@R: c(
     person("Thomas Lin", "Pedersen", , "thomasp85@gmail.com", c("aut", "cre")),
