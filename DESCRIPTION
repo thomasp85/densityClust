@@ -4,14 +4,17 @@ Title: Clustering by fast search and find of density peaks
 Version: 0.2.0
 Date: 2016-02-06
 Authors@R: c(
-    person("Thomas", "Pedersen", "Lin", "thomasp85@gmail.com", c("aut", "cre")),
+    person("Thomas Lin", "Pedersen", , "thomasp85@gmail.com", c("aut", "cre")),
     person("Sean", "Hughes", , , c("aut"))
-)
+    )
 Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
 Description: An implementation of the clustering algorithm described by Alex
     Rodriguez and Alessandro Laio (Science, 2014 vol. 344), along with tools to
     inspect and visualize the results.
 License: GPL (>= 2)
-Suggests: testthat
+Suggests:
+    testthat
 LinkingTo: Rcpp
-Imports: Rcpp
+Imports:
+    Rcpp
+RoxygenNote: 5.0.1
