@@ -7,7 +7,8 @@
 \usage{
 findClusters(x, ...)
 
-\method{findClusters}{densityCluster}(x, rho, delta, plot = FALSE, ...)
+\method{findClusters}{densityCluster}(x, rho = NULL, delta = NULL,
+  k = NULL, plot = FALSE, ...)
 }
 \arguments{
 \item{x}{A densityCluster object as produced by \code{\link{densityClust}}}
@@ -18,6 +19,9 @@ findClusters(x, ...)
 
 \item{delta}{The threshold for minimum distance to higher density when detecting cluster peaks}
 
+\item{k}{The number of peaks to find based on highest \code{gamma} (\code{= rho * delta}) values. Specifying
+this value overides any values of \code{rho} or \code{delta}.}
+
 \item{plot}{Logical. Should a decision plot be shown after cluster detection}
 }
 \value{
@@ -25,10 +29,10 @@ A densityCluster object with clusters assigned to all observations
 }
 \description{
 This function uses the supplied rho and delta thresholds to detect cluster
-peaks and assign the rest of the observations to one of these clusters. 
+peaks and assign the rest of the observations to one of these clusters.
 Furthermore core/halo status is calculated. If either rho or delta threshold
 is missing the user is presented with a decision plot where they are able to
-click on the plot area to set the treshold. If either rho or delta is set, 
+click on the plot area to set the treshold. If either rho or delta is set,
 this takes presedence over the value found by clicking.
 }
 \examples{

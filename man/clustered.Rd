@@ -13,7 +13,7 @@ clustered(x)
 \item{x}{A densityCluster object}
 }
 \value{
-TRUE if \code{\link{findClusters}} have been performed, otherwise 
+TRUE if \code{\link{findClusters}} have been performed, otherwise
 FALSE
 }
 \description{
