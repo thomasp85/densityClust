@@ -203,11 +203,15 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #' @examples
 #' irisDist <- dist(iris[,1:4])
 #' irisClust <- densityClust(irisDist, gaussian=TRUE)
+#' op <- par(ask = FALSE, mfrow = c(2, 1))
 #' plot(irisClust) # Inspect clustering attributes to define thresholds
+#' plot(irisClust, gamma = TRUE)
 #'
 #' irisClust <- findClusters(irisClust, rho=2, delta=2)
+#' par(ask = TRUE, mfrow = c(1, 1))
 #' plotMDS(irisClust)
 #' split(iris[,5], irisClust$clusters)
+#' par(op)
 #'
 #' @seealso \code{\link{estimateDc}}, \code{\link{findClusters}}
 #'
@@ -225,28 +229,57 @@ densityClust <- function(distance, dc, gaussian=FALSE) {
     class(res) <- 'densityCluster'
     res
 }
-#' @export
-#' @importFrom graphics plot points
-#' @noRd
+#' @rdname densityClust
+#' @param x A densityCluster object.
+#' @param gamma if \code{TRUE} plot cases based on sorted gamma (rho * delta)
+#'   values.
+#' @param num.pts number of points to plot (only used if \code{plot.gamma = TRUE}).
+#' @param col Vector of colors for clusters.
+#' @param ... Additional parameters. Currently ignored
 #'
-plot.densityCluster <- function(x, ...) {
-    plot(x$rho, x$delta, main='Decision graph', xlab=expression(rho), ylab=expression(delta))
+#' @importFrom graphics plot points
+#' @export
+#'
+plot.densityCluster <- function(x, gamma = FALSE, num.pts = 20, col = NULL, ...) {
+  if(!gamma) {
+    plot(x$rho, x$delta, xlab = expression(rho), ylab = expression(delta))
     if(!is.na(x$peaks[1])) {
-        points(x$rho[x$peaks], x$delta[x$peaks], col=2:(1+length(x$peaks)), pch=19)
+      if(is.null(col)) col <- 2:(1 + length(x$peaks))
+      points(x$rho[x$peaks], x$delta[x$peaks], col = col, pch = 19)
+      text(x$rho[x$peaks], x$delta[x$peaks], 1:length(x$peaks), adj = c(1, 1))
+      rho <- x$threshold["rho"]
+      delta <- x$threshold["delta"]
+      segments(rho, delta, rho, par("usr")[4], col = "gray60")
+      segments(rho, delta, par("usr")[2], delta, col = "gray60")
     }
+  } else {
+    g <- sort(x$rho * x$delta, decreasing = TRUE)
+    plot(g[1:num.pts], type = "b", pch = 19, ylab = expression(gamma))
+    if(!is.na(x$peaks[1])) {
+      n.pks <- length(x$peaks)
+      if(is.null(col)) col <- 2:(1 + n.pks)
+      points(1:n.pks, g[1:n.pks], col = col, pch = 19)
+      abline(v = n.pks + 0.5)
+      text(1:n.pks, g[1:n.pks], 1:n.pks, adj = c(0, 0))
+    }
+  }
 }
 #' Plot observations using multidimensional scaling and colour by cluster
 #'
 #' This function produces an MDS scatterplot based on the distance matrix of the
 #' densityCluster object, and, if clusters are defined, colours each observation
-#' according to cluster affiliation. Observations belonging to a cluster core is
-#' plotted with filled circles and observations belonging to the halo with
-#' hollow circles.
+#' according to cluster affiliation and labels them. Observations belonging to a
+#' cluster core are plotted with filled circles and observations belonging to
+#' the halo with hollow circles.
 #'
 #' @param x A densityCluster object as produced by \code{\link{densityClust}}
+#' @param dim.x,dim.y Vectors giving projections on first and second
+#'   multi-dimensonal scaling (principal coordinates) axes. If not given,
+#'   MDS is calculated and returned (invisibly) by the function.
+#' @param col Vector of colors for clusters.
 #'
-#' @param ... Additional parameters. Currently ignored
-#'
+#' @importFrom stats cmdscale
+#' @importFrom graphics plot points legend
 #' @examples
 #' irisDist <- dist(iris[,1:4])
 #' irisClust <- densityClust(irisDist, gaussian=TRUE)
@@ -260,29 +293,88 @@ plot.densityCluster <- function(x, ...) {
 #'
 #' @export
 #'
-plotMDS <- function (x, ...) {
-    UseMethod("plotMDS", x)
-}
-#' @export
-#' @importFrom stats cmdscale
-#' @importFrom graphics plot points legend
-#' @noRd
-#'
-plotMDS.densityCluster <- function(x, ...) {
+plotMDS <- function(x, dim.x = NULL, dim.y = NULL, col = NULL) {
+  mds <- NULL
+  if(is.null(dim.x) | is.null(dim.y)) {
     mds <- cmdscale(x$distance)
-    plot(mds[,1], mds[,2], xlab='', ylab='', main='MDS plot of observations')
-    if(!is.na(x$peaks[1])) {
-        for(i in 1:length(x$peaks)) {
-            ind <- which(x$clusters == i)
-            points(mds[ind, 1], mds[ind, 2], col=i+1, pch=ifelse(x$halo[ind], 1, 19))
-        }
-        legend('topright', legend=c('core', 'halo'), pch=c(19, 1), horiz=TRUE)
-    }
+  } else if((length(dim.x) == length(dim.y)) & length(dim.x == nrow(x$distance))) {
+    mds <- cbind(dim.x, dim.y)
+  } else {
+    warning("length of 'dim.x' or 'dim.y' is not same as number of observations in 'x'")
+    return(NULL)
+  }
+
+  dim.x <- mds[, 1]
+  dim.y <- mds[, 2]
+  xlim <- range(dim.x)
+  ylim <- range(dim.y)
+
+  plot.new()
+  plot.window(xlim = xlim, ylim = ylim)
+  axis(1)
+  axis(2)
+  box()
+  abline(h = 0, v = 0)
+  pch <- 1
+  pks <- x$peaks
+  if(!all(is.na(pks))) {
+    col <- if(is.null(col)) x$clusters + 1 else col[x$clusters]
+    pch <- ifelse(x$halo, 1, 19)
+  } else col <- 1
+  points(dim.x, dim.y, col = col, pch = pch, cex = 0.7)
+  if(!is.null(pks)) text(dim.x[pks], dim.y[pks], 1:length(pks), cex = 1.5)
+
+  invisible(mds)
+}
+#' Plot decision graph, gamma graph and MDS scatterplot of observations
+#'
+#' This function produces a single figure containing a decision graph
+#' (rho vs. delta), a gamma graph (sorted rho * delta), and a
+#' multi-dimensional scaling (MDS) scatterplot.
+#'
+#' @param x A densityCluster object as produced by \code{\link{densityClust}}
+#' @param dim.x,dim.y Vectors giving projections on first and second
+#'   multi-dimensonal scaling (principal coordinates) axes. If not given,
+#'   MDS is calculated and returned by the function.
+#' @param num.pts number of points to plot (only used if \code{plot.gamma = TRUE}).
+#' @param col Vector of colors for clusters.
+#'
+#' @seealso \code{\link{plot.densityCluster}} \code{\link{plotMDS}}
+#'
+#' @examples
+#' data(iris)
+#' data.dist <- dist(iris[, 1:4])
+#' pca <- princomp(iris[, 1:4])
+#'
+#' op <- par(ask = TRUE)
+#' dens.clust <- densityClust(data.dist)
+#' plotDensClust(dens.clust)
+#'
+#' n.vec <- 2:3
+#' clust.list <- lapply(n.vec, function(n) {
+#'   new.clust <- findClusters(dens.clust, k = n)
+#'   plotDensClust(new.clust, pca$scores)
+#'   new.clust
+#' })
+#' names(clust.list) <- n.vec
+#' par(op)
+#'
+#' @export
+#'
+plotDensClust <- function(x, dim.x = NULL, dim.y = NULL, num.pts = 20, col = NULL) {
+  op <- par(no.readonly = TRUE)
+  par(mar = c(4, 5, 1, 1))
+  layout(matrix(c(1, 2, 3, 3), nrow = 2, byrow = T), heights = c(1, 2))
+  plot(x = x, col = col)
+  plot(x = x, gamma = TRUE, num.pts = num.pts, col = col)
+  mds <- plotMDS(x = x, dim.x = dim.x, dim.y = dim.y, col = col)
+  layout(matrix(1))
+  par(op)
+  invisible(mds)
 }
 #' @export
 #'
 #' @noRd
-#'
 print.densityCluster <- function(x, ...) {
     if(is.na(x$peaks[1])) {
         cat('A densityCluster object with no clusters defined\n\n')

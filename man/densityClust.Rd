@@ -2,9 +2,13 @@
 % Please edit documentation in R/densityClust.R
 \name{densityClust}
 \alias{densityClust}
+\alias{plot.densityCluster}
 \title{Calculate clustering attributes based on the densityClust algorithm}
 \usage{
 densityClust(distance, dc, gaussian = FALSE)
+
+\method{plot}{densityCluster}(x, gamma = FALSE, num.pts = 20, col = NULL,
+  ...)
 }
 \arguments{
 \item{distance}{A distance matrix}
@@ -14,6 +18,17 @@ will be estimated with estimateDc(distance)}
 
 \item{gaussian}{Logical. Should a gaussian kernel be used to estimate the
 density (defaults to FALSE)}
+
+\item{x}{A densityCluster object.}
+
+\item{gamma}{if \code{TRUE} plot cases based on sorted gamma (rho * delta)
+values.}
+
+\item{num.pts}{number of points to plot (only used if \code{plot.gamma = TRUE}).}
+
+\item{col}{Vector of colors for clusters.}
+
+\item{...}{Additional parameters. Currently ignored}
 }
 \value{
 A densityCluster object. See details for a description.
@@ -47,11 +62,15 @@ NA.
 \examples{
 irisDist <- dist(iris[,1:4])
 irisClust <- densityClust(irisDist, gaussian=TRUE)
+op <- par(ask = FALSE, mfrow = c(2, 1))
 plot(irisClust) # Inspect clustering attributes to define thresholds
+plot(irisClust, gamma = TRUE)
 
 irisClust <- findClusters(irisClust, rho=2, delta=2)
+par(ask = TRUE, mfrow = c(1, 1))
 plotMDS(irisClust)
 split(iris[,5], irisClust$clusters)
+par(op)
 
 }
 \references{
