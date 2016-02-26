@@ -4,19 +4,23 @@
 \alias{plotMDS}
 \title{Plot observations using multidimensional scaling and colour by cluster}
 \usage{
-plotMDS(x, ...)
+plotMDS(x, dim.x = NULL, dim.y = NULL, col = NULL)
 }
 \arguments{
 \item{x}{A densityCluster object as produced by \code{\link{densityClust}}}
 
-\item{...}{Additional parameters. Currently ignored}
+\item{dim.x, dim.y}{Vectors giving projections on first and second
+multi-dimensonal scaling (principal coordinates) axes. If not given,
+MDS is calculated and returned (invisibly) by the function.}
+
+\item{col}{Vector of colors for clusters.}
 }
 \description{
 This function produces an MDS scatterplot based on the distance matrix of the
 densityCluster object, and, if clusters are defined, colours each observation
-according to cluster affiliation. Observations belonging to a cluster core is
-plotted with filled circles and observations belonging to the halo with
-hollow circles.
+according to cluster affiliation and labels them. Observations belonging to a
+cluster core are plotted with filled circles and observations belonging to
+the halo with hollow circles.
 }
 \examples{
 irisDist <- dist(iris[,1:4])

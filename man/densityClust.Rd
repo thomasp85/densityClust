@@ -2,9 +2,13 @@
 % Please edit documentation in R/densityClust.R
 \name{densityClust}
 \alias{densityClust}
+\alias{plot.densityCluster}
 \title{Calculate clustering attributes based on the densityClust algorithm}
 \usage{
 densityClust(distance, dc, gaussian = FALSE)
+
+\method{plot}{densityCluster}(x, gamma = FALSE, num.pts = 20, col = NULL,
+  ...)
 }
 \arguments{
 \item{distance}{A distance matrix}
@@ -12,21 +16,32 @@ densityClust(distance, dc, gaussian = FALSE)
 \item{dc}{A distance cutoff for calculating the local density. If missing it
 will be estimated with estimateDc(distance)}
 
-\item{gaussian}{Logical. Should a gaussian kernel be used to estimate the 
+\item{gaussian}{Logical. Should a gaussian kernel be used to estimate the
 density (defaults to FALSE)}
+
+\item{x}{A densityCluster object.}
+
+\item{gamma}{if \code{TRUE} plot cases based on sorted gamma (rho * delta)
+values.}
+
+\item{num.pts}{number of points to plot (only used if \code{plot.gamma = TRUE}).}
+
+\item{col}{Vector of colors for clusters.}
+
+\item{...}{Additional parameters. Currently ignored}
 }
 \value{
 A densityCluster object. See details for a description.
 }
 \description{
-This function takes a distance matrix and optionally a distance cutoff and 
-calculates the values necessary for clustering based on the algorithm 
-proposed by Alex Rodrigues and Alessandro Laio (see references). The actual 
-assignment to clusters are done in a later step, based on user defined 
+This function takes a distance matrix and optionally a distance cutoff and
+calculates the values necessary for clustering based on the algorithm
+proposed by Alex Rodrigues and Alessandro Laio (see references). The actual
+assignment to clusters are done in a later step, based on user defined
 threshold values.
 }
 \details{
-The function calculates rho and delta for the observations in the provided 
+The function calculates rho and delta for the observations in the provided
 distance matrix. If a distance cutoff is not provided this is first estimated
 using \code{\link{estimateDc}} with default values.
 
@@ -41,17 +56,21 @@ The information kept in the densityCluster object is:
   \item{clusters}{A vector of cluster affiliations for each observation. The clusters are referenced as indexes in the peaks vector}
   \item{halo}{A logical vector specifying for each observation if it is considered part of the halo}
 }
-Before running findClusters the threshold, peaks, clusters and halo data is 
+Before running findClusters the threshold, peaks, clusters and halo data is
 NA.
 }
 \examples{
 irisDist <- dist(iris[,1:4])
 irisClust <- densityClust(irisDist, gaussian=TRUE)
+op <- par(ask = FALSE, mfrow = c(2, 1))
 plot(irisClust) # Inspect clustering attributes to define thresholds
+plot(irisClust, gamma = TRUE)
 
 irisClust <- findClusters(irisClust, rho=2, delta=2)
+par(ask = TRUE, mfrow = c(1, 1))
 plotMDS(irisClust)
 split(iris[,5], irisClust$clusters)
+par(op)
 
 }
 \references{
