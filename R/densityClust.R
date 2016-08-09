@@ -382,7 +382,7 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, ...) {
         message(paste('the current index of the peak is ', i))
 
         averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2 #this match the density of two cells as in the distance matrix 
-        index <- findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), i, higherDensity) <= x$dc #comb[cluster == i, cluster != i] <= x$dc #distance matrix 
+        index <- findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), which(cluster == i), which(cluster != i)) <= x$dc #comb[cluster == i, cluster != i] <= x$dc #distance matrix 
         if(any(index)) border[i] <- max(averageRho[index]) #calculate the matrix value 
     }
     x$halo <- x$rho < border[cluster] #should we do this for each cluster? 
