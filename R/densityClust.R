@@ -69,6 +69,7 @@ NULL
 localDensity <- function(distance, dc, gaussian=FALSE) {
    # These implementations are faster by virtue of being written in C++
    # They also avoid the need to convert `distance` to a matrix. 
+   print(paste("the length of the distance:", length(distance)))
    if(gaussian) {
       res <- gaussianLocalDensity(distance, attr(distance, "Size"), dc)
    } else {
@@ -150,7 +151,7 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
       # equivalent. The diagonal of the matrix will always be 0, so as long as dc 
       # is greater than 0, we add 1 for every element of the diagonal, which is
       # the same as size
-      neighborRate <- (((sum(distance < dc) * 2 + (if (0 <= dc) size)) / size - 1)) / size
+      neighborRate <- (((sum(distance < dc) * 2 + (if (0 <= dc) size)) / size - 1)) / size # sum(distance < dc) / size^2
       if(neighborRate >= neighborRateLow && neighborRate <= neighborRateHigh) break
       
       if(neighborRate < neighborRateLow) {
@@ -339,7 +340,7 @@ findClusters <- function (x, ...) {
 #' 
 #' @export
 #' @importFrom graphics plot locator
-findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, ...) {
+findClusters.densityCluster <- function(x, rho, delta, cores = 1, plot=FALSE, ...) {
     # Detect cluster peaks
     if(missing(rho) || missing(delta)) {
         x$peaks <- NA
@@ -359,28 +360,69 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, ...) {
     }
     
     # Assign observations to clusters
-    comb <- as.matrix(x$distance)
+    #comb <- as.matrix(x$distance) ##huge matrix this step 
     runOrder <- order(x$rho, decreasing = TRUE)
     cluster <- rep(NA, length(x$rho))
-    for(i in runOrder) {
+
+    mclapply(runOrder, function(i) {
+      if((i %% 1000) == 0)
+        message(paste('the runOrder index is ', i))
+
         if(i %in% x$peaks) {
             cluster[i] <- match(i, x$peaks)
         } else {
             higherDensity <- which(x$rho>x$rho[i])
-            cluster[i] <- cluster[higherDensity[which.min(comb[i, higherDensity])]]
+            cluster[i] <<- cluster[higherDensity[which.min(findDistValueByRowColInd(x$distance, i, higherDensity))]]#cluster[higherDensity[which.min(comb[i, higherDensity])]]
         }
-    }
+
+    }, mc.cores = cores)
+
     x$clusters <- cluster
-    
+
     # Calculate core/halo status of observation
     border <- rep(0, length(x$peaks))
-    for(i in 1:length(x$peaks)) {
-        averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2
-        index <- comb[cluster == i, cluster != i] <= x$dc
-        if(any(index)) border[i] <- max(averageRho[index])
-    }
-    x$halo <- x$rho < border[cluster]
+    
+    mclapply(1:length(x$peaks), function(i) { #can we parallelize this part? 
+        message(paste('the current index of the peak is ', i))
+
+        averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2 #this match the density of two cells as in the distance matrix 
+        index <- findDistValueByRowColInd(x$distance, i, higherDensity) <= x$dc #comb[cluster == i, cluster != i] <= x$dc #distance matrix 
+        if(any(index)) border[i] <<- max(averageRho[index]) #calculate the matrix value 
+    }, mc.cores = cores)
+
+    x$halo <- x$rho < border[cluster] #should we do this for each cluster? 
     x
+
+}
+#' Calculate index of the element in distance object based on the row and column index 
+#' 
+findDistValueByRowColInd <- function (distance, row_inds, col_inds){
+  num_row <- attr(distance, "Size")
+  res <- rep(0, length(col_inds) * length(row_inds))
+  i <- 1
+  for(row_ind in row_inds) {
+    for(col_ind in col_inds){
+      if(row_ind == col_ind){
+        res[i] <- 0
+      }
+      else{
+        if(col_ind > row_ind) {
+          row_ind_tmp <- row_ind 
+          col_ind_tmp <- col_ind 
+          row_ind_new <- col_ind_tmp
+          col_ind_new <- row_ind_tmp
+        }
+        else{
+          row_ind_new <- row_ind
+          col_ind_new <- col_ind          
+        }
+        dist_ind <- num_row * (col_ind_new - 1) + row_ind_new - sum(1:col_ind_new)
+        res[i] <- distance[dist_ind]
+      }
+      i <- i + 1
+    }
+  }
+  return(res)
 }
 
 #' Extract cluster membership from a densityCluster object
