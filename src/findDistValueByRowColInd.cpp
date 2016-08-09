@@ -16,13 +16,19 @@ NumericVector findDistValueByRowColInd(NumericVector distance, size_t num_row, N
   size_t row_inds_len = row_inds.size();
   size_t col_inds_len = col_inds.size();
   NumericVector res(row_inds_len * col_inds_len);
+
+  // Rcout << "distance is " << distance  << "col_inds index is " << col_inds << std::endl; 
+  // Rcout << "row_inds is " << row_inds  << "col_inds index is " << col_inds << std::endl;
+  // Rcout << "col_inds_len is " << col_inds_len  << "col_inds_len index is " << col_inds_len  << "res length is " << res.size() << std::endl;
   
   size_t i = 0;
-  
-  for (size_t col = 0; col < col_inds_len; col++) {
-    size_t col_ind = col_inds[col];
-    for (size_t row = col + 1; row < row_inds_len; row++) {
-      size_t row_ind = row_inds[row];
+  size_t dist_ind; 
+
+  for (size_t row = 0; row < row_inds_len; row++) {
+    size_t row_ind = row_inds[row];
+    for (size_t col = 0; col < col_inds_len; col++) {
+      size_t col_ind = col_inds[col];
+      // Rcout << "col is " << col  << "row is " << row << std::endl;
 
       if(row_ind == col_ind){
         res[i] = 0;
@@ -41,8 +47,13 @@ NumericVector findDistValueByRowColInd(NumericVector distance, size_t num_row, N
           row_ind_new = row_ind;
           col_ind_new = col_ind;          
         }
-        size_t dist_ind = num_row * (col_ind_new - 1) + row_ind_new - 1/2 * (1 + col_ind_new) * col_ind_new;
-        res[i] = distance[dist_ind]; 
+         dist_ind = num_row * (col_ind_new - 1) + row_ind_new - 0.5 * (1 + col_ind_new) * col_ind_new - 1;
+         // if(row_ind == 3 && col_ind == 2){
+          // Rcout << "num_row * (col_ind_new - 1) is " << num_row * (col_ind_new - 1)  << " 1/2 * (1 + col_ind_new) * col_ind_new is " << 0.5 * (1 + 1) * col_ind_new  << " num_row is " << num_row << " dist_ind is " << num_row * (col_ind_new - 1) + row_ind_new - 1/2 * (1 + col_ind_new) * col_ind_new - 1 << std::endl;
+
+          // Rcout << "col_ind_new is " << col_ind_new  << " row_ind_new index is " << row_ind_new  << " num_row is " << num_row << " dist_ind is " << dist_ind << " distance under the current index " << distance[dist_ind] << std::endl;
+         // }
+         res[i] = distance[dist_ind]; 
       }
       i++; 
     }
