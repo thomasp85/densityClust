@@ -5,6 +5,10 @@ distanceToPeakCpp <- function(distance, rho) {
     .Call('densityClust_distanceToPeakCpp', PACKAGE = 'densityClust', distance, rho)
 }
 
+findDistValueByRowColInd <- function(distance, num_row, row_inds, col_inds) {
+    .Call('densityClust_findDistValueByRowColInd', PACKAGE = 'densityClust', distance, num_row, row_inds, col_inds)
+}
+
 gaussianLocalDensity <- function(distance, nrow, dc) {
     .Call('densityClust_gaussianLocalDensity', PACKAGE = 'densityClust', distance, nrow, dc)
 }

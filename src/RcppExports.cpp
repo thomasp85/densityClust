@@ -17,27 +17,41 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// findDistValueByRowColInd
+NumericVector findDistValueByRowColInd(NumericVector distance, size_t num_row, NumericVector row_inds, NumericVector col_inds);
+RcppExport SEXP densityClust_findDistValueByRowColInd(SEXP distanceSEXP, SEXP num_rowSEXP, SEXP row_indsSEXP, SEXP col_indsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector >::type distance(distanceSEXP);
+    Rcpp::traits::input_parameter< size_t >::type num_row(num_rowSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type row_inds(row_indsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type col_inds(col_indsSEXP);
+    __result = Rcpp::wrap(findDistValueByRowColInd(distance, num_row, row_inds, col_inds));
+    return __result;
+END_RCPP
+}
 // gaussianLocalDensity
-NumericVector gaussianLocalDensity(NumericVector distance, int nrow, double dc);
+NumericVector gaussianLocalDensity(NumericVector distance, size_t nrow, double dc);
 RcppExport SEXP densityClust_gaussianLocalDensity(SEXP distanceSEXP, SEXP nrowSEXP, SEXP dcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< NumericVector >::type distance(distanceSEXP);
-    Rcpp::traits::input_parameter< int >::type nrow(nrowSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nrow(nrowSEXP);
     Rcpp::traits::input_parameter< double >::type dc(dcSEXP);
     __result = Rcpp::wrap(gaussianLocalDensity(distance, nrow, dc));
     return __result;
 END_RCPP
 }
 // nonGaussianLocalDensity
-NumericVector nonGaussianLocalDensity(NumericVector distance, int nrow, double dc);
+NumericVector nonGaussianLocalDensity(NumericVector distance, size_t nrow, double dc);
 RcppExport SEXP densityClust_nonGaussianLocalDensity(SEXP distanceSEXP, SEXP nrowSEXP, SEXP dcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< NumericVector >::type distance(distanceSEXP);
-    Rcpp::traits::input_parameter< int >::type nrow(nrowSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nrow(nrowSEXP);
     Rcpp::traits::input_parameter< double >::type dc(dcSEXP);
     __result = Rcpp::wrap(nonGaussianLocalDensity(distance, nrow, dc));
     return __result;
