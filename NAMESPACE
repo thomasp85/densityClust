@@ -3,6 +3,7 @@
 S3method(clustered,densityCluster)
 S3method(clusters,densityCluster)
 S3method(findClusters,densityCluster)
+S3method(findClusters,densityCluster.ori)
 S3method(labels,densityCluster)
 S3method(plot,densityCluster)
 S3method(plotMDS,densityCluster)

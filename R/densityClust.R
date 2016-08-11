@@ -345,6 +345,7 @@ findClusters <- function (x, ...) {
 findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, ...) {
     # Detect cluster peaks
     if(!is.null(peaks)){
+      message('peaks are provided, clustering will be performed based on them')
       x$peaks <- peaks
     }
     else{
