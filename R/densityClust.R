@@ -338,23 +338,29 @@ findClusters <- function (x, ...) {
 #' 
 #' @param plot Logical. Should a decision plot be shown after cluster detection
 #' 
+#' @param peaks A numeric vector indicates the index of density peaks used for clustering. This vector should be retrieved from the decision plot with caution. No checking involved.  
+#'
 #' @export
 #' @importFrom graphics plot locator
-findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, ...) {
+findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, ...) {
     # Detect cluster peaks
-    if(missing(rho) || missing(delta)) {
-        x$peaks <- NA
-        plot(x)
-        cat('Click on plot to select thresholds\n')
-        threshold <- locator(1)
-        if(missing(rho)) rho <- threshold$x
-        if(missing(delta)) delta <- threshold$y
-        plot=TRUE
+    if(!is.null(peaks)){
+      x$peaks <- peaks
     }
-    x$peaks <- which(x$rho > rho & x$delta > delta)
-    x$threshold['rho'] <- rho
-    x$threshold['delta'] <- delta
-    
+    else{
+      if(missing(rho) || missing(delta)) {
+          x$peaks <- NA
+          plot(x)
+          cat('Click on plot to select thresholds\n')
+          threshold <- locator(1)
+          if(missing(rho)) rho <- threshold$x
+          if(missing(delta)) delta <- threshold$y
+          plot=TRUE
+      }
+      x$peaks <- which(x$rho > rho & x$delta > delta)
+      x$threshold['rho'] <- rho
+      x$threshold['delta'] <- delta
+    }
     if(plot) {
         plot(x)
     }
