@@ -93,3 +93,4 @@ gaussianDensityClustReference <- Map(referenceImplementation, dists, dcs, TRUE)
 
 # convenient for debugging, but calling non-exported functions not allowed in CRAN
 # gaussianLocalDensityReference <- Map(f = function(x, y) reference_localDensity(x, y, gaussian = TRUE), dists, estimateDcReference)
+
