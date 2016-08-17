@@ -69,7 +69,8 @@ NULL
 localDensity <- function(distance, dc, gaussian=FALSE) {
    # These implementations are faster by virtue of being written in C++
    # They also avoid the need to convert `distance` to a matrix. 
-   print(paste("the length of the distance:", length(distance)))
+   message(paste("the length of the distance:", length(distance)))
+  
    if(gaussian) {
       res <- gaussianLocalDensity(distance, attr(distance, "Size"), dc)
    } else {
@@ -236,6 +237,7 @@ densityClust <- function(distance, dc, gaussian=FALSE, verbose = F) {
     message('Returning result...')
   res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA)
   class(res) <- 'densityCluster'
+  res
 }
 #' @export
 #' @importFrom graphics plot points
@@ -387,9 +389,10 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, v
     if(verbose)
       message('Assigning each sample to a cluster based on its nearest density peak')
     for(i in runOrder) { #can we parallel this part? 
-      if((i %% round(runOrder / 25)) == 0)
+      if((i %% round(length(runOrder) / 25)) == 0){
         if(verbose)
           message(paste('the runOrder index is', i))
+      }
 
       if(i %in% x$peaks) {
         cluster[i] <- match(i, x$peaks)
@@ -405,7 +408,8 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, v
     if(verbose)
       message('Identifying the border for each cluster')
     for(i in 1:length(x$peaks)) { #can we parallelize this part? 
-        message(paste('the current index of the peak is ', i))
+        if(verbose)
+          message(paste('the current index of the peak is ', i))
 
         averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2 #this match the density of two cells as in the distance matrix 
         index <- findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), which(cluster == i), which(cluster != i)) <= x$dc #comb[cluster == i, cluster != i] <= x$dc #distance matrix 
