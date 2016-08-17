@@ -35,9 +35,9 @@ NumericVector nonGaussianLocalDensity(NumericVector distance, size_t nrow, doubl
    for (size_t col = 0; col < ncol; col++) {
       for (size_t row = col + 1; row < nrow; row++) {
          if((i % 10000) == 0){
-            if(verbose){
+            // if(verbose){
                // Rcout << "index is " << i << " distance under the current index " << distance[i] << std::endl;
-            }
+            // }
          }
          if(i > distance.size()){
            // Rcout << "Warning: index is larger than the length of the distance vector" << distance[i] << std::endl;
