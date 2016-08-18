@@ -8,7 +8,7 @@
 findClusters(x, ...)
 
 \method{findClusters}{densityCluster}(x, rho, delta, plot = FALSE,
-  peaks = NULL, ...)
+  peaks = NULL, verbose = F, ...)
 }
 \arguments{
 \item{x}{A densityCluster object as produced by \code{\link{densityClust}}}
@@ -22,6 +22,8 @@ findClusters(x, ...)
 \item{plot}{Logical. Should a decision plot be shown after cluster detection}
 
 \item{peaks}{A numeric vector indicates the index of density peaks used for clustering. This vector should be retrieved from the decision plot with caution. No checking involved.}
+
+\item{verbose}{Logical. Should the running details be reported}
 }
 \value{
 A densityCluster object with clusters assigned to all observations
