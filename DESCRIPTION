@@ -12,13 +12,9 @@ Description: An implementation of the clustering algorithm described by Alex
     Rodriguez and Alessandro Laio (Science, 2014 vol. 344), along with tools to
     inspect and visualize the results.
 License: GPL (>= 2)
-Suggests: testthat
+Suggests:
+    testthat
 LinkingTo: Rcpp
-Imports: Rcpp
+Imports:
+    Rcpp
 RoxygenNote: 5.0.1
-NeedsCompilation: yes
-Packaged: 2016-02-06 12:28:04 UTC; Thomas
-Author: Thomas Lin Pedersen [aut, cre],
-  Sean Hughes [aut]
-Repository: CRAN
-Date/Publication: 2016-02-06 13:47:07

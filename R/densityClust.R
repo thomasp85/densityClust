@@ -69,7 +69,7 @@ NULL
 localDensity <- function(distance, dc, gaussian=FALSE) {
    # These implementations are faster by virtue of being written in C++
    # They also avoid the need to convert `distance` to a matrix. 
-   message(paste("the length of the distance:", length(distance)))
+   message("the length of the distance: ", length(distance))
   
    if(gaussian) {
       res <- gaussianLocalDensity(distance, attr(distance, "Size"), dc)
@@ -152,7 +152,7 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
       # equivalent. The diagonal of the matrix will always be 0, so as long as dc 
       # is greater than 0, we add 1 for every element of the diagonal, which is
       # the same as size
-      neighborRate <- (((sum(distance < dc) * 2 + (if (0 <= dc) size)) / size - 1)) / size # sum(distance < dc) / size^2
+      neighborRate <- (((sum(distance < dc) * 2 + (if (0 <= dc) size)) / size - 1)) / size 
       if(neighborRate >= neighborRateLow && neighborRate <= neighborRateHigh) break
       
       if(neighborRate < neighborRateLow) {
@@ -221,20 +221,24 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #' 
 densityClust <- function(distance, dc, gaussian=FALSE, verbose = F) {
   if(missing(dc)) {
-    if(verbose)
-      message('Calculating the distance cutoff')
+    if(verbose) {
+        message('Calculating the distance cutoff')
+    }
     dc <- estimateDc(distance)
   }
-  if(verbose)
+  if(verbose) {
     message('Calculating the local density for each sample based on distance cutoff')
+  }
   rho <- localDensity(distance, dc, gaussian=gaussian)
   
-  if(verbose)
+  if(verbose) {
     message('Calculating the minimal distance of a sample to another sample with higher density')
+  }
   delta <- distanceToPeak(distance, rho)
   
-  if(verbose)
+  if(verbose) {
     message('Returning result...')
+  }
   res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA)
   class(res) <- 'densityCluster'
   res
@@ -359,12 +363,12 @@ findClusters <- function (x, ...) {
 #' @importFrom graphics plot locator
 findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, verbose = F, ...) {
     # Detect cluster peaks
-    if(!is.null(peaks)){
-      if(verbose)
+    if(!is.null(peaks)) {
+      if(verbose) {
         message('peaks are provided, clustering will be performed based on them')
+      }
       x$peaks <- peaks
-    }
-    else{
+    } else {
       if(missing(rho) || missing(delta)) {
           x$peaks <- NA
           plot(x)
@@ -383,37 +387,40 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, v
     }
     
     # Assign observations to clusters
-    #comb <- as.matrix(x$distance) ##huge matrix this step 
     runOrder <- order(x$rho, decreasing = TRUE)
     cluster <- rep(NA, length(x$rho))
-    if(verbose)
+    if(verbose) {
       message('Assigning each sample to a cluster based on its nearest density peak')
-    for(i in runOrder) { #can we parallel this part? 
+    }
+    for(i in runOrder) { 
       if((i %% round(length(runOrder) / 25)) == 0){
-        if(verbose)
+        if(verbose) {
           message(paste('the runOrder index is', i))
+        }
       }
 
       if(i %in% x$peaks) {
         cluster[i] <- match(i, x$peaks)
       } else {
         higherDensity <- which(x$rho>x$rho[i])
-        cluster[i] <- cluster[higherDensity[which.min(findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), i, higherDensity))]] #cluster[higherDensity[which.min(comb[i, higherDensity])]]
+        cluster[i] <- cluster[higherDensity[which.min(findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), i, higherDensity))]] 
       }
     }
     x$clusters <- cluster
     
     # Calculate core/halo status of observation
     border <- rep(0, length(x$peaks))
-    if(verbose)
+    if(verbose) {
       message('Identifying the border for each cluster')
-    for(i in 1:length(x$peaks)) { #can we parallelize this part? 
-        if(verbose)
-          message(paste('the current index of the peak is ', i))
+    }
+    for(i in 1:length(x$peaks)) {
+        if(verbose) {
+          message('the current index of the peak is ', i)
+        }
 
-        averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2 #this match the density of two cells as in the distance matrix 
-        index <- findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), which(cluster == i), which(cluster != i)) <= x$dc #comb[cluster == i, cluster != i] <= x$dc #distance matrix 
-        if(any(index)) border[i] <- max(averageRho[index]) #calculate the matrix value 
+        averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2 
+        index <- findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), which(cluster == i), which(cluster != i)) <= x$dc 
+        if(any(index)) border[i] <- max(averageRho[index]) 
     }
     x$halo <- x$rho < border[cluster] 
     x
