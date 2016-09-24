@@ -19,6 +19,7 @@ Imports:
     Rcpp,
     ggplot2,
     ggrepel,
+    grDevices,
     gridExtra,
     RColorBrewer
 RoxygenNote: 5.0.1.9000

@@ -57,6 +57,7 @@
 #'   theme_bw theme scale_color_manual geom_line geom_label
 #' @importFrom ggrepel geom_label_repel
 #' @importFrom gridExtra grid.arrange
+#' @importFrom grDevices rainbow
 #' @export
 #'
 plotDensityClust <- function(x, type = "all", n = 20,
@@ -73,33 +74,20 @@ plotDensityClust <- function(x, type = "all", n = 20,
   df$peaks[x$peaks] <- TRUE
   df$peak.id <- factor(ifelse(df$peaks, df$cluster, NA))
 
-  if(is.null(col)) col <- brewer.pal(max(nlevels(df$peak.id), 3), "Set2")
+  if(is.null(col)) {
+    num.cols <- max(nlevels(df$peak.id), 3)
+    col <- if(num.cols <= 8) {
+      brewer.pal(num.cols, "Set2")
+    } else if(num.cols <= 12) {
+      brewer.pal(num.cols, "Set3")
+    } else rainbow(num.cols)
+  }
 
   plots <- list(dg = NULL, gg = NULL, mds = NULL)
 
   # Plot decision graph (dg)
   if(any(pmatch(type, "dg", nomatch = 0))) {
     plots$dg <- ggplot(df, aes_string(x = "rho", y = "delta"))
-    plots$dg <- if(any(df$peaks)) {
-      plots$dg +
-        geom_text(
-          aes_string(label = "cluster", color = "peak.id"),
-          data = df[df$peaks, ],
-          fontface = "bold"
-        ) +
-        geom_point(
-          aes_string(color = "peak.id"),
-          data = df[!df$peaks, ],
-          size = 3, alpha = alpha
-        ) +
-        scale_color_manual(values = col, na.value = "gray50")
-    } else {
-      plots$dg +
-        geom_point(
-          data = df[!df$peaks, ],
-          size = 3, color = "gray50", alpha = alpha
-        )
-    }
     if(!any(is.na(x$threshold))) {
       rho <- x$threshold["rho"]
       delta <- x$threshold["delta"]
@@ -116,9 +104,29 @@ plotDensityClust <- function(x, type = "all", n = 20,
           lineend = "butt"
         )
     }
+    plots$dg <- if(any(df$peaks)) {
+      plots$dg +
+        geom_label(
+          aes_string(label = "cluster", color = "peak.id"),
+          data = df[df$peaks, ],
+          fontface = "bold", alpha = alpha
+        ) +
+        geom_point(
+          aes_string(color = "peak.id"),
+          data = df[!df$peaks, ],
+          size = 3, alpha = alpha
+        ) +
+        scale_color_manual(values = col, na.value = "gray50")
+    } else {
+      plots$dg +
+        geom_point(
+          data = df[!df$peaks, ],
+          size = 3, color = "gray50", alpha = alpha
+        )
+    }
+
     plots$dg <- plots$dg  +
       labs(x = expression(rho), y = expression(delta), color = "Cluster") +
-      theme_bw() +
       theme(legend.position = "none")
   }
 
@@ -148,7 +156,6 @@ plotDensityClust <- function(x, type = "all", n = 20,
     }
     plots$gg <- plots$gg +
       labs(y = expression(gamma), color = "Cluster") +
-      theme_bw() +
       theme(legend.position = "none")
   }
 
@@ -189,7 +196,6 @@ plotDensityClust <- function(x, type = "all", n = 20,
     }
     plots$mds <- plots$mds +
       labs(x = paste("Dimension", dim.x), y = paste("Dimension", dim.y)) +
-      theme_bw() +
       theme(legend.position = "none")
   }
 
