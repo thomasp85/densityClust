@@ -25,10 +25,10 @@ A densityCluster object with clusters assigned to all observations
 }
 \description{
 This function uses the supplied rho and delta thresholds to detect cluster
-peaks and assign the rest of the observations to one of these clusters. 
+peaks and assign the rest of the observations to one of these clusters.
 Furthermore core/halo status is calculated. If either rho or delta threshold
 is missing the user is presented with a decision plot where they are able to
-click on the plot area to set the treshold. If either rho or delta is set, 
+click on the plot area to set the treshold. If either rho or delta is set,
 this takes presedence over the value found by clicking.
 }
 \examples{
