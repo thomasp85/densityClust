@@ -72,15 +72,14 @@ plotDensityClust <- function(x, type = "all", n = 20,
     peaks = FALSE, cluster = factor(x$clusters), halo = x$halo
   )
   df$peaks[x$peaks] <- TRUE
-  df$peak.id <- factor(ifelse(df$peaks, df$cluster, NA))
 
   if(is.null(col)) {
-    num.cols <- max(nlevels(df$peak.id), 3)
+    num.cols <- max(nlevels(df$cluster), 3)
     col <- if(num.cols <= 8) {
       brewer.pal(num.cols, "Set2")
     } else if(num.cols <= 12) {
       brewer.pal(num.cols, "Set3")
-    } else rainbow(num.cols)
+    } else rainbow(num.cols + 1)[1:num.cols]
   }
 
   plots <- list(dg = NULL, gg = NULL, mds = NULL)
@@ -104,28 +103,20 @@ plotDensityClust <- function(x, type = "all", n = 20,
           lineend = "butt"
         )
     }
-    plots$dg <- if(any(df$peaks)) {
-      plots$dg +
+    if(any(df$peaks)) {
+      plots$dg <- plots$dg +
         geom_label(
-          aes_string(label = "cluster", color = "peak.id"),
+          aes_string(label = "cluster", color = "cluster"),
           data = df[df$peaks, ],
           fontface = "bold", alpha = alpha
         ) +
-        geom_point(
-          aes_string(color = "peak.id"),
-          data = df[!df$peaks, ],
-          size = 3, alpha = alpha
-        ) +
-        scale_color_manual(values = col, na.value = "gray50")
-    } else {
-      plots$dg +
-        geom_point(
-          data = df[!df$peaks, ],
-          size = 3, color = "gray50", alpha = alpha
-        )
+        scale_color_manual(values = col)
     }
-
     plots$dg <- plots$dg  +
+      geom_point(
+        data = df[!df$peaks, ],
+        size = 3, color = "gray50", alpha = alpha
+      ) +
       labs(x = expression(rho), y = expression(delta), color = "Cluster") +
       theme(legend.position = "none")
   }
@@ -133,28 +124,24 @@ plotDensityClust <- function(x, type = "all", n = 20,
   # Plot gamma graph (gg)
   if(any(pmatch(type, "gg", nomatch = 0))) {
     gg.df <- df[order(df$gamma, decreasing = TRUE), ]
-    gg.df <- gg.df[1:n, ]
+    gg.df <- gg.df[1:n, , drop = FALSE]
     gg.df$Sample <- 1:nrow(gg.df)
-    p <- sum(gg.df$peaks)
 
     plots$gg <- ggplot(gg.df, aes_string(x = "Sample", y = "gamma")) + geom_line()
-    plots$gg <- if(any(gg.df$peaks)) {
-      plots$gg +
+    if(any(gg.df$peaks)) {
+      plots$gg <- plots$gg +
         geom_label(
-          aes_string(label = "cluster", color = "peak.id"),
-          data = gg.df[gg.df$peaks, ],
-          fontface = "bold"
+          aes_string(label = "cluster", color = "cluster"),
+          data = gg.df[gg.df$peaks, , drop = FALSE],
+          fontface = "bold", alpha = alpha
         ) +
-        geom_point(
-          aes_string(color = "peak.id"),
-          data = gg.df[!gg.df$peaks, ],
-          size = 3
-        ) +
-        scale_color_manual(values = col, na.value = "gray50")
-    } else {
-      plots$gg + geom_point(data = gg.df, size = 3, color = "gray50")
+        scale_color_manual(values = col)
     }
     plots$gg <- plots$gg +
+      geom_point(
+        data = gg.df[!gg.df$peaks, , drop = FALSE],
+        size = 3, color = "gray50"
+      ) +
       labs(y = expression(gamma), color = "Cluster") +
       theme(legend.position = "none")
   }
@@ -177,20 +164,18 @@ plotDensityClust <- function(x, type = "all", n = 20,
       plots$mds +
         geom_point(
           aes_string(x = "x", y = "y", color = "cluster"),
-          data = df[df$halo, ],
+          data = df[df$halo, , drop = FALSE],
           shape = 21, size = 3
         ) +
         geom_point(
           aes_string(x = "x", y = "y", color = "cluster"),
-          data = df[!df$halo, ],
+          data = df[!df$halo, , drop = FALSE],
           size = 3, alpha = alpha
         ) +
         geom_label_repel(
           aes_string(x = "x", y = "y", label = "cluster", color = "cluster"),
-          data = df[df$peaks, ],
-          alpha = 0.7,
-          size = 6,
-          fontface = "bold"
+          data = df[df$peaks, , drop = FALSE],
+          size = 6, fontface = "bold", alpha = alpha
         ) +
         scale_color_manual(values = col, na.value = "gray50")
     }
