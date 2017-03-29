@@ -372,14 +372,15 @@ findClusters <- function (x, ...) {
 #' @export
 #' @importFrom graphics plot locator
 findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, verbose = F, ...) {
-    if(is.null(x$distance)) {
-      peak_ind <- which(rho > rho_threshold & delta > delta_threshold)
+    if(class(x$distance) %in% c('data.frame', 'matrix')) {
+      peak_ind <- which(x$rho > rho & x$delta > delta)
       x$peaks <- peak_ind
 
+      knn_graph <- x$knn_graph
       shortest_dist <- shortest.paths(knn_graph, V(knn_graph), peak_ind)
       cluster <- apply(shortest_dist, 1, which.min)
 
-      x$clusters <- factor(ind)
+      x$clusters <- factor(cluster)
       x$halo <- NULL #update this
 
       x$threshold['rho'] <- rho
@@ -591,7 +592,7 @@ densityClust.knn <- function(mat, k = 30, use_dist = T, verbose = F, ...) {
   if(verbose) {
     message('Returning result...')
   }
-  res <- list(rho=rho, delta=delta, distance=NULL, dc=NULL, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA, knn_graph = knn_graph)
+  res <- list(rho=rho, delta=delta, distance=mat, dc=NULL, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA, knn_graph = knn_graph)
   class(res) <- 'densityCluster'
   res
 }
