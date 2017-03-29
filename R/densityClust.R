@@ -219,29 +219,39 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #' 
 #' @export
 #' 
-densityClust <- function(distance, dc, gaussian=FALSE, verbose = F) {
-  if(missing(dc)) {
-    if(verbose) {
-        message('Calculating the distance cutoff')
+densityClust <- function(distance, dc, gaussian=FALSE, verbose = F, ...) {
+  extra_arguments <- list(...)
+  if(class(distance) %in% c('data.frame', 'matrix')) {
+    dp_knn_args <- c(list(mat=distance, verbose = verbose),
+                  extra_arguments[names(extra_arguments) %in% c("k", "use_dist")])
+    #browser()
+    res <- do.call(densityClust.knn, dp_knn_args)
+    return(res)
+  }
+  else {
+    if(missing(dc)) {
+      if(verbose) {
+          message('Calculating the distance cutoff')
+      }
+      dc <- estimateDc(distance)
     }
-    dc <- estimateDc(distance)
+    if(verbose) {
+      message('Calculating the local density for each sample based on distance cutoff')
+    }
+    rho <- localDensity(distance, dc, gaussian=gaussian)
+    
+    if(verbose) {
+      message('Calculating the minimal distance of a sample to another sample with higher density')
+    }
+    delta <- distanceToPeak(distance, rho)
+    
+    if(verbose) {
+      message('Returning result...')
+    }
+    res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA)
+    class(res) <- 'densityCluster'
+    res
   }
-  if(verbose) {
-    message('Calculating the local density for each sample based on distance cutoff')
-  }
-  rho <- localDensity(distance, dc, gaussian=gaussian)
-  
-  if(verbose) {
-    message('Calculating the minimal distance of a sample to another sample with higher density')
-  }
-  delta <- distanceToPeak(distance, rho)
-  
-  if(verbose) {
-    message('Returning result...')
-  }
-  res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA)
-  class(res) <- 'densityCluster'
-  res
 }
 #' @export
 #' @importFrom graphics plot points
@@ -362,67 +372,77 @@ findClusters <- function (x, ...) {
 #' @export
 #' @importFrom graphics plot locator
 findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, verbose = F, ...) {
-    # Detect cluster peaks
-    if(!is.null(peaks)) {
-      if(verbose) {
-        message('peaks are provided, clustering will be performed based on them')
-      }
-      x$peaks <- peaks
-    } else {
-      if(missing(rho) || missing(delta)) {
-          x$peaks <- NA
-          plot(x)
-          cat('Click on plot to select thresholds\n')
-          threshold <- locator(1)
-          if(missing(rho)) rho <- threshold$x
-          if(missing(delta)) delta <- threshold$y
-          plot=TRUE
-      }
-      x$peaks <- which(x$rho > rho & x$delta > delta)
-      x$threshold['rho'] <- rho
-      x$threshold['delta'] <- delta
-    }
-    if(plot) {
-        plot(x)
-    }
-    
-    # Assign observations to clusters
-    runOrder <- order(x$rho, decreasing = TRUE)
-    cluster <- rep(NA, length(x$rho))
-    if(verbose) {
-      message('Assigning each sample to a cluster based on its nearest density peak')
-    }
-    for(i in runOrder) { 
-      if((i %% round(length(runOrder) / 25)) == 0){
+    if(is.null(x$distance)) {
+      peak_ind <- which(rho > rho_threshold & delta > delta_threshold)
+      peak_ind <- which(rho > rho_threshold & delta > delta_threshold)
+      short_dist <- shortest.paths(knn_graph, V(knn_graph), peak_ind)
+      cluster <- apply(short_dist, 1, which.min)
+      x$clusters <- factor(ind)
+      x$halo <- NULL
+    } 
+    else {
+      # Detect cluster peaks
+      if(!is.null(peaks)) {
         if(verbose) {
-          message(paste('the runOrder index is', i))
+          message('peaks are provided, clustering will be performed based on them')
         }
-      }
-
-      if(i %in% x$peaks) {
-        cluster[i] <- match(i, x$peaks)
+        x$peaks <- peaks
       } else {
-        higherDensity <- which(x$rho>x$rho[i])
-        cluster[i] <- cluster[higherDensity[which.min(findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), i, higherDensity))]] 
+        if(missing(rho) || missing(delta)) {
+            x$peaks <- NA
+            plot(x)
+            cat('Click on plot to select thresholds\n')
+            threshold <- locator(1)
+            if(missing(rho)) rho <- threshold$x
+            if(missing(delta)) delta <- threshold$y
+            plot=TRUE
+        }
+        x$peaks <- which(x$rho > rho & x$delta > delta)
+        x$threshold['rho'] <- rho
+        x$threshold['delta'] <- delta
       }
-    }
-    x$clusters <- cluster
-    
-    # Calculate core/halo status of observation
-    border <- rep(0, length(x$peaks))
-    if(verbose) {
-      message('Identifying the border for each cluster')
-    }
-    for(i in 1:length(x$peaks)) {
-        if(verbose) {
-          message('the current index of the peak is ', i)
+      if(plot) {
+          plot(x)
+      }
+      
+      # Assign observations to clusters
+      runOrder <- order(x$rho, decreasing = TRUE)
+      cluster <- rep(NA, length(x$rho))
+      if(verbose) {
+        message('Assigning each sample to a cluster based on its nearest density peak')
+      }
+      for(i in runOrder) { 
+        if((i %% round(length(runOrder) / 25)) == 0){
+          if(verbose) {
+            message(paste('the runOrder index is', i))
+          }
         }
 
-        averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2 
-        index <- findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), which(cluster == i), which(cluster != i)) <= x$dc 
-        if(any(index)) border[i] <- max(averageRho[index]) 
+        if(i %in% x$peaks) {
+          cluster[i] <- match(i, x$peaks)
+        } else {
+          higherDensity <- which(x$rho>x$rho[i])
+          cluster[i] <- cluster[higherDensity[which.min(findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), i, higherDensity))]] 
+        }
+      }
+      x$clusters <- cluster
+      
+      # Calculate core/halo status of observation
+      border <- rep(0, length(x$peaks))
+      if(verbose) {
+        message('Identifying the border for each cluster')
+      }
+      for(i in 1:length(x$peaks)) {
+          if(verbose) {
+            message('the current index of the peak is ', i)
+          }
+
+          averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2 
+          index <- findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), which(cluster == i), which(cluster != i)) <= x$dc 
+          if(any(index)) border[i] <- max(averageRho[index]) 
+      }
+      x$halo <- x$rho < border[cluster] 
     }
-    x$halo <- x$rho < border[cluster] 
     x
 }
 
@@ -507,4 +527,66 @@ clustered.densityCluster <- function(x) {
 #' 
 labels.densityCluster <- function(object, ...) {
     labels(object$distance)
+}
+
+#' Extract labels
+#' 
+#' @noRd
+#' 
+#' @export
+#' 
+densityClust.knn <- function(mat, k = 30, use_dist = T, verbose = F, ...) {
+  if(verbose) {
+    message('Calculating kNN graph')
+  }
+ 
+  dx <- FNN::get.knn(mat, k = k)
+
+  nn.index <- dx$nn.index
+  nn.dist <- dx$nn.dist
+  N <- nrow(nn.index)
+
+  edges <- reshape2::melt(t(nn.index)); colnames(edges) <- c("B", "A", "C"); edges <- edges[,c("A","B","C")]
+  edges_weight <- reshape2::melt(t(nn.dist)); #colnames(edges_weight) = c("B", "A", "C"); edges_weight = edges_weight[,c("A","B","C")]
+  edges$B <- edges$C; 
+  if(use_dist) 
+    edges$C <- edges_weight$value
+  else
+    edges$C <- 1
+
+  #Remove repetitions
+  edges = unique(transform(edges, A = pmin(A,B), B=pmax(A,B)))
+
+  Adj <- Matrix::sparseMatrix(i = c(edges$A, edges$B), j = c(edges$B, edges$A), x = c(edges$C, edges$C), dims = c(N, N))
+
+  knn_graph <- graph_from_adjacency_matrix(Adj, mode = "undirected", weighted = T)
+
+  if(verbose) {
+    message('Calculating the local density for each sample based on distance cutoff')
+  }
+
+  rho <- apply(dx$nn.dist, 1, function(x) {
+      exp(-mean(x))
+    })
+  
+  if(verbose) {
+    message('Calculating the minimal distance of a sample to another sample with higher density')
+  }
+  
+  rho_order <- order(rho)
+
+  delta <- vector(mode = 'integer', length = N)
+  for(i in 1:N) {
+    dis <- igraph::shortest.paths(knn_graph, rho_order[i], rho_order[-c(1:i)])
+    delta[rho_order[i]] <- min(dis)
+  }
+
+  delta[which(is.infinite(delta))] <- max(delta[which(!is.infinite(delta))]) #set the distance for the cell with highest density
+ 
+  if(verbose) {
+    message('Returning result...')
+  }
+  res <- list(rho=rho, delta=delta, distance=NULL, dc=NULL, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA, knn_graph = knn_graph)
+  class(res) <- 'densityCluster'
+  res
 }
