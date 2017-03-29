@@ -374,11 +374,16 @@ findClusters <- function (x, ...) {
 findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, verbose = F, ...) {
     if(is.null(x$distance)) {
       peak_ind <- which(rho > rho_threshold & delta > delta_threshold)
-      peak_ind <- which(rho > rho_threshold & delta > delta_threshold)
-      short_dist <- shortest.paths(knn_graph, V(knn_graph), peak_ind)
-      cluster <- apply(short_dist, 1, which.min)
+      x$peaks <- peak_ind
+
+      shortest_dist <- shortest.paths(knn_graph, V(knn_graph), peak_ind)
+      cluster <- apply(shortest_dist, 1, which.min)
+
       x$clusters <- factor(ind)
-      x$halo <- NULL
+      x$halo <- NULL #update this
+
+      x$threshold['rho'] <- rho
+      x$threshold['delta'] <- delta
     } 
     else {
       # Detect cluster peaks
