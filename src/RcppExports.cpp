@@ -31,6 +31,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// smallest_dist_rho_order_coords
+List smallest_dist_rho_order_coords(NumericVector ordered_rho, NumericVector ordered_coords);
+RcppExport SEXP densityClust_smallest_dist_rho_order_coords(SEXP ordered_rhoSEXP, SEXP ordered_coordsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type ordered_rho(ordered_rhoSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ordered_coords(ordered_coordsSEXP);
+    rcpp_result_gen = Rcpp::wrap(smallest_dist_rho_order_coords(ordered_rho, ordered_coords));
+    return rcpp_result_gen;
+END_RCPP
+}
 // gaussianLocalDensity
 NumericVector gaussianLocalDensity(NumericVector distance, size_t nrow, double dc);
 RcppExport SEXP densityClust_gaussianLocalDensity(SEXP distanceSEXP, SEXP nrowSEXP, SEXP dcSEXP) {

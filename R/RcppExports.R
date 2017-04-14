@@ -9,6 +9,10 @@ findDistValueByRowColInd <- function(distance, num_row, row_inds, col_inds) {
     .Call('densityClust_findDistValueByRowColInd', PACKAGE = 'densityClust', distance, num_row, row_inds, col_inds)
 }
 
+smallest_dist_rho_order_coords <- function(ordered_rho, ordered_coords) {
+    .Call('densityClust_smallest_dist_rho_order_coords', PACKAGE = 'densityClust', ordered_rho, ordered_coords)
+}
+
 gaussianLocalDensity <- function(distance, nrow, dc) {
     .Call('densityClust_gaussianLocalDensity', PACKAGE = 'densityClust', distance, nrow, dc)
 }

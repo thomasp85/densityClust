@@ -136,6 +136,8 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
    # object. Subsampling to 100000 elements will speed performance for very 
    # large dist objects while retaining good accuracy in estimating the cutoff
    if(size > 448) {
+      # ensure the consistency of clustering result
+      set.seed(2017) 
       distance <- distance[sample.int(length(distance), 100128)]
       size <- 448
    }
@@ -376,13 +378,44 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, v
       peak_ind <- which(x$rho > rho & x$delta > delta)
       x$peaks <- peak_ind
 
-      knn_graph <- x$knn_graph
-      shortest_dist <- shortest.paths(knn_graph, V(knn_graph), peak_ind)
-      cluster <- apply(shortest_dist, 1, which.min)
-
+      # knn_graph <- x$knn_graph
+      # shortest_dist <- igraph::shortest.paths(knn_graph, igraph::V(knn_graph), peak_ind)
+      # cluster <- apply(shortest_dist, 1, which.min)
+      # 
+      # x$clusters <- factor(cluster)
+      # x$halo <- NULL #update this
+      # 
+      # 
+      # Assign observations to clusters
+      runOrder <- order(x$rho, decreasing = TRUE)
+      cluster <- rep(NA, length(x$rho))
+      
+      for(i in x$peaks) {
+        cluster[i] <- match(i, x$peaks)
+        # target_lower_density_samples <- which(x$nearest_higher_density_neighbor == i) #all the target cells should have the same cluster id as current higher density cell
+        # if(length(target_lower_density_samples)) {
+        #   cluster[target_lower_density_samples] <- cluster[i]
+        # }
+      } 
+      
+      # recursively_assign_cluster <- function(curr_ind, nearest_higher_density_neighbor, cluster) {
+      #   target_sample_density_samples <- which(x$nearest_higher_density_neighbor + 1 == i) #all the target cells should have the same cluster id as current higher density cell
+      #   if(is.na(cluster[target_sample_density_samples])) {
+      #     cluster[curr_ind] <- recursively_assign_cluster(curr_ind, nearest_higher_density_neighbor, cluster) cluster[target_lower_density_samples] <- cluster[i]
+      #   } else {
+      #     return(cluster[target_sample_density_samples])
+      #   }
+      # }
+        
+      for(ind in setdiff(runOrder, x$peaks)) { 
+        target_lower_density_samples <- which(x$nearest_higher_density_neighbor == ind) #all the target cells should have the same cluster id as current higher density cell
+        # if(length(target_lower_density_samples)) {
+          cluster[ind] <- cluster[x$nearest_higher_density_neighbor[ind]]
+        # }
+      }
+      
       x$clusters <- factor(cluster)
       x$halo <- NULL #update this
-
       x$threshold['rho'] <- rho
       x$threshold['delta'] <- delta
     } 
@@ -541,7 +574,7 @@ labels.densityCluster <- function(object, ...) {
 #' 
 #' @export
 #' 
-densityClust.knn <- function(mat, k = 30, use_dist = T, verbose = F, ...) {
+densityClust.knn <- function(mat, k = 5, use_dist = T, verbose = F, ...) {
   if(verbose) {
     message('Calculating kNN graph')
   }
@@ -552,11 +585,12 @@ densityClust.knn <- function(mat, k = 30, use_dist = T, verbose = F, ...) {
   nn.dist <- dx$nn.dist
   N <- nrow(nn.index)
 
+  knn_graph <- NULL
   edges <- reshape2::melt(t(nn.index)); colnames(edges) <- c("B", "A", "C"); edges <- edges[,c("A","B","C")]
   edges_weight <- reshape2::melt(t(nn.dist)); #colnames(edges_weight) = c("B", "A", "C"); edges_weight = edges_weight[,c("A","B","C")]
-  edges$B <- edges$C; 
-  if(use_dist) 
-    edges$C <- edges_weight$value
+  edges$B <- edges$C;
+  if(use_dist)
+    edges$C <- 1#edges_weight$value
   else
     edges$C <- 1
 
@@ -565,34 +599,48 @@ densityClust.knn <- function(mat, k = 30, use_dist = T, verbose = F, ...) {
 
   Adj <- Matrix::sparseMatrix(i = c(edges$A, edges$B), j = c(edges$B, edges$A), x = c(edges$C, edges$C), dims = c(N, N))
 
-  knn_graph <- graph_from_adjacency_matrix(Adj, mode = "undirected", weighted = T)
+  knn_graph <- igraph::graph_from_adjacency_matrix(Adj, mode = "undirected", weighted = T)
 
   if(verbose) {
-    message('Calculating the local density for each sample based on distance cutoff')
+    message('Calculating the local density for each sample based on kNN graph')
   }
 
   rho <- apply(dx$nn.dist, 1, function(x) {
       exp(-mean(x))
     })
   
+  
+  # double combOver = distance[i] / dc;
+  # double negSq = pow(combOver, 2) * -1;
+  # half[i] = exp(negSq);
+  # 
   if(verbose) {
     message('Calculating the minimal distance of a sample to another sample with higher density')
   }
-  
+
   rho_order <- order(rho)
 
   delta <- vector(mode = 'integer', length = N)
-  for(i in 1:N) {
-    dis <- igraph::shortest.paths(knn_graph, rho_order[i], rho_order[-c(1:i)])
-    delta[rho_order[i]] <- min(dis)
-  }
+  nearest_higher_density_neighbor <- vector(mode = 'integer', length = N)
+  # for(i in 1:N) {
+  #   dis <- igraph::shortest.paths(knn_graph, rho_order[i], rho_order[-c(1:i)], )
+  #   delta[rho_order[i]] <- min(dis)
+  # }
+  # 
+  # delta[which(is.infinite(delta))] <- max(delta[which(!is.infinite(delta))]) #set the distance for the cell with highest density
+  # 
+  delta_neighbor_tmp <- smallest_dist_rho_order_coords(rho[rho_order], mat[rho_order, ])
+  delta[rho_order] <- delta_neighbor_tmp$smallest_dist
+  nearest_higher_density_neighbor[rho_order] <- rho_order[delta_neighbor_tmp$nearest_higher_density_sample + 1]
 
-  delta[which(is.infinite(delta))] <- max(delta[which(!is.infinite(delta))]) #set the distance for the cell with highest density
- 
+  Adj <- Matrix::sparseMatrix(i = 1:N, j = nearest_higher_density_neighbor, x = delta, dims = c(N, N)) #create the knn graph 
+  #knn_graph <- igraph::graph_from_adjacency_matrix(Adj, mode = "undirected", weighted = NULL) #weight is not necessary here 
+  
   if(verbose) {
     message('Returning result...')
   }
-  res <- list(rho=rho, delta=delta, distance=mat, dc=NULL, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA, knn_graph = knn_graph)
+  res <- list(rho=rho, delta=delta, distance=mat, dc=NULL, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA, 
+              knn_graph = knn_graph, nearest_higher_density_neighbor = nearest_higher_density_neighbor)
   class(res) <- 'densityCluster'
   res
 }
