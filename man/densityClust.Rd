@@ -4,7 +4,7 @@
 \alias{densityClust}
 \title{Calculate clustering attributes based on the densityClust algorithm}
 \usage{
-densityClust(distance, dc, gaussian = FALSE)
+densityClust(distance, dc, gaussian = FALSE, verbose = F)
 }
 \arguments{
 \item{distance}{A distance matrix}
@@ -14,6 +14,8 @@ will be estimated with estimateDc(distance)}
 
 \item{gaussian}{Logical. Should a gaussian kernel be used to estimate the 
 density (defaults to FALSE)}
+
+\item{verbose}{Logical. Should the running details be reported}
 }
 \value{
 A densityCluster object. See details for a description.

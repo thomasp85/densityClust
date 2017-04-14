@@ -69,6 +69,8 @@ NULL
 localDensity <- function(distance, dc, gaussian=FALSE) {
    # These implementations are faster by virtue of being written in C++
    # They also avoid the need to convert `distance` to a matrix. 
+   message("the length of the distance: ", length(distance))
+  
    if(gaussian) {
       res <- gaussianLocalDensity(distance, attr(distance, "Size"), dc)
    } else {
@@ -150,7 +152,7 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
       # equivalent. The diagonal of the matrix will always be 0, so as long as dc 
       # is greater than 0, we add 1 for every element of the diagonal, which is
       # the same as size
-      neighborRate <- (((sum(distance < dc) * 2 + (if (0 <= dc) size)) / size - 1)) / size
+      neighborRate <- (((sum(distance < dc) * 2 + (if (0 <= dc) size)) / size - 1)) / size 
       if(neighborRate >= neighborRateLow && neighborRate <= neighborRateHigh) break
       
       if(neighborRate < neighborRateLow) {
@@ -198,6 +200,8 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #' @param gaussian Logical. Should a gaussian kernel be used to estimate the 
 #' density (defaults to FALSE)
 #' 
+#' @param verbose Logical. Should the running details be reported  
+#'
 #' @return A densityCluster object. See details for a description.
 #' 
 #' @examples
@@ -215,15 +219,29 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #' 
 #' @export
 #' 
-densityClust <- function(distance, dc, gaussian=FALSE) {
-    if(missing(dc)) {
-        dc <- estimateDc(distance)
+densityClust <- function(distance, dc, gaussian=FALSE, verbose = F) {
+  if(missing(dc)) {
+    if(verbose) {
+        message('Calculating the distance cutoff')
     }
-    rho <- localDensity(distance, dc, gaussian=gaussian)
-    delta <- distanceToPeak(distance, rho)
-    res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA)
-    class(res) <- 'densityCluster'
-    res
+    dc <- estimateDc(distance)
+  }
+  if(verbose) {
+    message('Calculating the local density for each sample based on distance cutoff')
+  }
+  rho <- localDensity(distance, dc, gaussian=gaussian)
+  
+  if(verbose) {
+    message('Calculating the minimal distance of a sample to another sample with higher density')
+  }
+  delta <- distanceToPeak(distance, rho)
+  
+  if(verbose) {
+    message('Returning result...')
+  }
+  res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA)
+  class(res) <- 'densityCluster'
+  res
 }
 #' @export
 #' @importFrom graphics plot points
@@ -337,49 +355,74 @@ findClusters <- function (x, ...) {
 #' 
 #' @param plot Logical. Should a decision plot be shown after cluster detection
 #' 
+#' @param peaks A numeric vector indicates the index of density peaks used for clustering. This vector should be retrieved from the decision plot with caution. No checking involved.  
+#'
+#' @param verbose Logical. Should the running details be reported  
+#'
 #' @export
 #' @importFrom graphics plot locator
-findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, ...) {
+findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, verbose = F, ...) {
     # Detect cluster peaks
-    if(missing(rho) || missing(delta)) {
-        x$peaks <- NA
-        plot(x)
-        cat('Click on plot to select thresholds\n')
-        threshold <- locator(1)
-        if(missing(rho)) rho <- threshold$x
-        if(missing(delta)) delta <- threshold$y
-        plot=TRUE
+    if(!is.null(peaks)) {
+      if(verbose) {
+        message('peaks are provided, clustering will be performed based on them')
+      }
+      x$peaks <- peaks
+    } else {
+      if(missing(rho) || missing(delta)) {
+          x$peaks <- NA
+          plot(x)
+          cat('Click on plot to select thresholds\n')
+          threshold <- locator(1)
+          if(missing(rho)) rho <- threshold$x
+          if(missing(delta)) delta <- threshold$y
+          plot=TRUE
+      }
+      x$peaks <- which(x$rho > rho & x$delta > delta)
+      x$threshold['rho'] <- rho
+      x$threshold['delta'] <- delta
     }
-    x$peaks <- which(x$rho > rho & x$delta > delta)
-    x$threshold['rho'] <- rho
-    x$threshold['delta'] <- delta
-    
     if(plot) {
         plot(x)
     }
     
     # Assign observations to clusters
-    comb <- as.matrix(x$distance)
     runOrder <- order(x$rho, decreasing = TRUE)
     cluster <- rep(NA, length(x$rho))
-    for(i in runOrder) {
-        if(i %in% x$peaks) {
-            cluster[i] <- match(i, x$peaks)
-        } else {
-            higherDensity <- which(x$rho>x$rho[i])
-            cluster[i] <- cluster[higherDensity[which.min(comb[i, higherDensity])]]
+    if(verbose) {
+      message('Assigning each sample to a cluster based on its nearest density peak')
+    }
+    for(i in runOrder) { 
+      if((i %% round(length(runOrder) / 25)) == 0){
+        if(verbose) {
+          message(paste('the runOrder index is', i))
         }
+      }
+
+      if(i %in% x$peaks) {
+        cluster[i] <- match(i, x$peaks)
+      } else {
+        higherDensity <- which(x$rho>x$rho[i])
+        cluster[i] <- cluster[higherDensity[which.min(findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), i, higherDensity))]] 
+      }
     }
     x$clusters <- cluster
     
     # Calculate core/halo status of observation
     border <- rep(0, length(x$peaks))
-    for(i in 1:length(x$peaks)) {
-        averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2
-        index <- comb[cluster == i, cluster != i] <= x$dc
-        if(any(index)) border[i] <- max(averageRho[index])
+    if(verbose) {
+      message('Identifying the border for each cluster')
     }
-    x$halo <- x$rho < border[cluster]
+    for(i in 1:length(x$peaks)) {
+        if(verbose) {
+          message('the current index of the peak is ', i)
+        }
+
+        averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2 
+        index <- findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), which(cluster == i), which(cluster != i)) <= x$dc 
+        if(any(index)) border[i] <- max(averageRho[index]) 
+    }
+    x$halo <- x$rho < border[cluster] 
     x
 }
 
