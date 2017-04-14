@@ -20,4 +20,3 @@ FALSE
 This function checks whether \code{\link{findClusters}} has been performed on
 the given object and returns a boolean depending on the outcome
 }
-

@@ -408,7 +408,24 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, v
       }
       
       x$clusters <- factor(cluster)
-      x$halo <- NULL #update this
+
+      # Calculate core/halo status of observation
+      border <- rep(0, length(x$peaks))
+      if(verbose) {
+        message('Identifying core and halo for each cluster')
+      }
+      
+      for(i in 1:length(x$peaks)) {
+        if(verbose) {
+          message('the current index of the peak is ', i)
+        }
+        
+        connect_samples_ind <- intersect(unique(x$nn.index[cluster == i, ]), which(cluster != i))
+        averageRho <- outer(x$rho[cluster == i], x$rho[connect_samples_ind], '+') / 2 
+        if(any(connect_samples_ind)) border[i] <- max(averageRho[connect_samples_ind]) 
+      }
+      x$halo <- x$rho < border[cluster] 
+      
       x$threshold['rho'] <- rho
       x$threshold['delta'] <- delta
     } 
@@ -462,7 +479,7 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, v
       # Calculate core/halo status of observation
       border <- rep(0, length(x$peaks))
       if(verbose) {
-        message('Identifying the border for each cluster')
+        message('Identifying core and halo for each cluster')
       }
       for(i in 1:length(x$peaks)) {
           if(verbose) {
@@ -567,18 +584,17 @@ labels.densityCluster <- function(object, ...) {
 #' (normally the coordinates after tSNE or other dimension reduction algorithm)
 #' of the data, then finds the k-nearest neighbors together with the distance
 #' of each sample. Those distance of kNNs are used to calculate the local density
-#' $\rho$ as well as the distance ($\sigma$). 
+#' rho as well as the distance (sigma). 
 #' 
 #' @details
 #' The function finds the kNNs by fast nearest neighbor finding algorithm implemented
-#' in FNN package. The local density $\rho$ is simply calculated as exp(-mean(x)) where
+#' in FNN package. The local density rho is simply calculated as exp(-mean(x)) where
 #' x is the distance of the nearest neighbors. We short C++ subroutine is then 
-#' used to calculate the $\delta$ based on the sorted $\rho$ and corresponding 
+#' used to calculate the delta based on the sorted rho and corresponding 
 #' coordinates. Since we don't rely on the distance matrix between all pairs of 
 #' sample, this kNN based strategy dramatically reduce the memory and computational 
 #' requirement. We have run it on datasets with more than 100, 000 samples in about 
 #' 10 mins with accurate results. 
-#' 
 #' The information kept in the densityCluster object is:
 #' \describe{
 #'   \item{rho}{A vector of local density values}
@@ -589,6 +605,8 @@ labels.densityCluster <- function(object, ...) {
 #'   \item{peaks}{A vector of indexes specifying the cluster center for each cluster}
 #'   \item{clusters}{A vector of cluster affiliations for each observation. The clusters are referenced as indexes in the peaks vector}
 #'   \item{halo}{A logical vector specifying for each observation if it is considered part of the halo}
+#'   \item{knn_graph}{a kNN graph, currently not prepared.}
+#'   \item{nearest_higher_density_neighbor}{index of the nearest sample with higher density}
 #' }
 #' Before running findClusters the threshold, peaks, clusters and halo data is 
 #' NA.
@@ -609,7 +627,7 @@ labels.densityCluster <- function(object, ...) {
 #' plot(irisClust) # Inspect clustering attributes to define thresholds
 #' 
 #' # for large dataset, plotMDS function is not suggested. 
-#' irisClust <- findClusters(irisClust, rho=2, delta=2)
+#' irisClust <- findClusters(irisClust, rho=0.8, delta=2)
 #' plot(iris[,1], iris[,2], xlab='', ylab='', main='MDS plot of observations')
 #' if(!is.na(irisClust$peaks[1])) {
 #'     for(i in 1:length(x$peaks)) {
@@ -638,7 +656,7 @@ densityClust.knn <- function(mat, k = 5, verbose = F, ...) {
   nn.dist <- dx$nn.dist
   N <- nrow(nn.index)
 
-  # knn_graph <- NULL
+  knn_graph <- NULL
   # edges <- reshape2::melt(t(nn.index)); colnames(edges) <- c("B", "A", "C"); edges <- edges[,c("A","B","C")]
   # edges_weight <- reshape2::melt(t(nn.dist)); #colnames(edges_weight) = c("B", "A", "C"); edges_weight = edges_weight[,c("A","B","C")]
   # edges$B <- edges$C;
@@ -662,7 +680,7 @@ densityClust.knn <- function(mat, k = 5, verbose = F, ...) {
   # double negSq = pow(combOver, 2) * -1;
   # half[i] = exp(negSq);
   # 
-  rho <- apply(dx$nn.dist, 1, function(x) {
+  rho <- apply(nn.dist, 1, function(x) {
       exp(-mean(x))
     })
   
@@ -682,7 +700,7 @@ densityClust.knn <- function(mat, k = 5, verbose = F, ...) {
   # 
   # delta[which(is.infinite(delta))] <- max(delta[which(!is.infinite(delta))]) #set the distance for the cell with highest density
   # 
-  delta_neighbor_tmp <- smallest_dist_rho_order_coords(rho[rho_order], mat[rho_order, ])
+  delta_neighbor_tmp <- smallest_dist_rho_order_coords(rho[rho_order], as.matrix(mat[rho_order, ]))
   delta[rho_order] <- delta_neighbor_tmp$smallest_dist
   nearest_higher_density_neighbor[rho_order] <- rho_order[delta_neighbor_tmp$nearest_higher_density_sample + 1]
 
@@ -693,7 +711,8 @@ densityClust.knn <- function(mat, k = 5, verbose = F, ...) {
     message('Returning result...')
   }
   res <- list(rho=rho, delta=delta, distance=mat, dc=NULL, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA, 
-              knn_graph = knn_graph, nearest_higher_density_neighbor = nearest_higher_density_neighbor)
+              knn_graph = knn_graph, nearest_higher_density_neighbor = nearest_higher_density_neighbor, 
+              nn.index = nn.index, nn.dist = nn.dist)
   class(res) <- 'densityCluster'
   res
 }

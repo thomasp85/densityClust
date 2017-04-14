@@ -39,4 +39,3 @@ omitted. The list format correspond to the following transform of the vector
 format \code{split(1:length(clusters), clusters)}, where \code{clusters} are 
 the cluster information in vector format.
 }
-

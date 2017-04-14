@@ -4,7 +4,7 @@
 \alias{densityClust}
 \title{Calculate clustering attributes based on the densityClust algorithm}
 \usage{
-densityClust(distance, dc, gaussian = FALSE, verbose = F)
+densityClust(distance, dc, gaussian = FALSE, verbose = F, ...)
 }
 \arguments{
 \item{distance}{A distance matrix}
@@ -62,4 +62,3 @@ Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density 
 \seealso{
 \code{\link{estimateDc}}, \code{\link{findClusters}}
 }
-

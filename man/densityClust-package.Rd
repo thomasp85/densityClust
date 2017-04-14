@@ -48,4 +48,3 @@ Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density 
 \seealso{
 \code{\link{densityClust}}, \code{\link{findClusters}}, \code{\link{plotMDS}}
 }
-
