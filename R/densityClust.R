@@ -268,10 +268,13 @@ plot.densityCluster <- function(x, ...) {
 #' Plot observations using multidimensional scaling and colour by cluster
 #' 
 #' This function produces an MDS scatterplot based on the distance matrix of the
-#' densityCluster object, and, if clusters are defined, colours each observation
-#' according to cluster affiliation. Observations belonging to a cluster core is
-#' plotted with filled circles and observations belonging to the halo with
-#' hollow circles.
+#' densityCluster object (if there is only the coordinates information, a distance
+#' matrix will be calculate firstly), and, if clusters are defined, colours each 
+#' observation according to cluster affiliation. Observations belonging to a cluster
+#' core is plotted with filled circles and observations belonging to the halo with
+#' hollow circles. This plotting is not suitable for running large datasets (for example
+#' datasets with > 1000 samples). Users are suggested to use other methods, for example
+#' tSNE, etc. to visualize their clustering results too. 
 #' 
 #' @param x A densityCluster object as produced by \code{\link{densityClust}}
 #' 
@@ -299,7 +302,11 @@ plotMDS <- function (x, ...) {
 #' @noRd
 #' 
 plotMDS.densityCluster <- function(x, ...) {
-    mds <- cmdscale(x$distance)
+    if(class(x$distance) %in% c('data.frame', 'matrix')) {
+      mds <- cmdscale(dist(x$distance))
+    } else {
+      mds <- cmdscale(x$distance)
+    }
     plot(mds[,1], mds[,2], xlab='', ylab='', main='MDS plot of observations')
     if(!is.na(x$peaks[1])) {
         for(i in 1:length(x$peaks)) {
@@ -371,6 +378,8 @@ findClusters <- function (x, ...) {
 #'
 #' @param verbose Logical. Should the running details be reported  
 #'
+#' @param ... Additional parameters. Currently ignored
+#'
 #' @export
 #' @importFrom graphics plot locator
 findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, verbose = F, ...) {
@@ -392,26 +401,10 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, v
       
       for(i in x$peaks) {
         cluster[i] <- match(i, x$peaks)
-        # target_lower_density_samples <- which(x$nearest_higher_density_neighbor == i) #all the target cells should have the same cluster id as current higher density cell
-        # if(length(target_lower_density_samples)) {
-        #   cluster[target_lower_density_samples] <- cluster[i]
-        # }
       } 
-      
-      # recursively_assign_cluster <- function(curr_ind, nearest_higher_density_neighbor, cluster) {
-      #   target_sample_density_samples <- which(x$nearest_higher_density_neighbor + 1 == i) #all the target cells should have the same cluster id as current higher density cell
-      #   if(is.na(cluster[target_sample_density_samples])) {
-      #     cluster[curr_ind] <- recursively_assign_cluster(curr_ind, nearest_higher_density_neighbor, cluster) cluster[target_lower_density_samples] <- cluster[i]
-      #   } else {
-      #     return(cluster[target_sample_density_samples])
-      #   }
-      # }
-        
       for(ind in setdiff(runOrder, x$peaks)) { 
         target_lower_density_samples <- which(x$nearest_higher_density_neighbor == ind) #all the target cells should have the same cluster id as current higher density cell
-        # if(length(target_lower_density_samples)) {
           cluster[ind] <- cluster[x$nearest_higher_density_neighbor[ind]]
-        # }
       }
       
       x$clusters <- factor(cluster)
@@ -568,60 +561,120 @@ labels.densityCluster <- function(object, ...) {
     labels(object$distance)
 }
 
-#' Extract labels
+#' Calculate local density and distance of current cell to another cell with higher density using highly memory and computationally efficient kNN graph based strategy. 
 #' 
-#' @noRd
+#' This function takes a matrix or dataframe storing the coordinates 
+#' (normally the coordinates after tSNE or other dimension reduction algorithm)
+#' of the data, then finds the k-nearest neighbors together with the distance
+#' of each sample. Those distance of kNNs are used to calculate the local density
+#' $\rho$ as well as the distance ($\sigma$). 
+#' 
+#' @details
+#' The function finds the kNNs by fast nearest neighbor finding algorithm implemented
+#' in FNN package. The local density $\rho$ is simply calculated as exp(-mean(x)) where
+#' x is the distance of the nearest neighbors. We short C++ subroutine is then 
+#' used to calculate the $\delta$ based on the sorted $\rho$ and corresponding 
+#' coordinates. Since we don't rely on the distance matrix between all pairs of 
+#' sample, this kNN based strategy dramatically reduce the memory and computational 
+#' requirement. We have run it on datasets with more than 100, 000 samples in about 
+#' 10 mins with accurate results. 
+#' 
+#' The information kept in the densityCluster object is:
+#' \describe{
+#'   \item{rho}{A vector of local density values}
+#'   \item{delta}{A vector of minimum distances to observations of higher density}
+#'   \item{distance}{The initial distance matrix}
+#'   \item{dc}{The distance cutoff used to calculate rho}
+#'   \item{threshold}{A named vector specifying the threshold values for rho and delta used for cluster detection}
+#'   \item{peaks}{A vector of indexes specifying the cluster center for each cluster}
+#'   \item{clusters}{A vector of cluster affiliations for each observation. The clusters are referenced as indexes in the peaks vector}
+#'   \item{halo}{A logical vector specifying for each observation if it is considered part of the halo}
+#' }
+#' Before running findClusters the threshold, peaks, clusters and halo data is 
+#' NA.
+#' 
+#' @param mat The coordinates of each sample
+#' 
+#' @param k The number of nearest neighbors used to calculate the local density, 
+#' similar to the distance threshold discussed in the original study.
+#' 
+#' @param verbose Logical. Should the detailed running information displayed? 
+#' 
+#' @param ... Additional parameters passed into densityClust.knn function, used in FNN function.  
+#'
+#' @return A densityCluster object. See details for a description.
+#' 
+#' @examples
+#' irisClust <- densityClust(iris[,1:4], verbose=TRUE)
+#' plot(irisClust) # Inspect clustering attributes to define thresholds
+#' 
+#' # for large dataset, plotMDS function is not suggested. 
+#' irisClust <- findClusters(irisClust, rho=2, delta=2)
+#' plot(iris[,1], iris[,2], xlab='', ylab='', main='MDS plot of observations')
+#' if(!is.na(irisClust$peaks[1])) {
+#'     for(i in 1:length(x$peaks)) {
+#'         ind <- which(irisClust$clusters == i)
+#'        points(mds[ind, 1], mds[ind, 2], col=i+1, pch=ifelse(x$halo[ind], 1, 19))
+#'     }
+#'     legend('topright', legend=c('core', 'halo'), pch=c(19, 1), horiz=TRUE)
+#' }
+#'
+#' split(iris[,5], irisClust$clusters)
+#' 
+#' @seealso \code{\link{estimateDc}}, \code{\link{findClusters}}
+#' 
+#' @references Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
 #' 
 #' @export
 #' 
-densityClust.knn <- function(mat, k = 5, use_dist = T, verbose = F, ...) {
+densityClust.knn <- function(mat, k = 5, verbose = F, ...) {
   if(verbose) {
-    message('Calculating kNN graph')
+    message('Finding kNN using FNN ...')
   }
  
-  dx <- FNN::get.knn(mat, k = k)
+  dx <- FNN::get.knn(mat, k = k, ...)
 
   nn.index <- dx$nn.index
   nn.dist <- dx$nn.dist
   N <- nrow(nn.index)
 
-  knn_graph <- NULL
-  edges <- reshape2::melt(t(nn.index)); colnames(edges) <- c("B", "A", "C"); edges <- edges[,c("A","B","C")]
-  edges_weight <- reshape2::melt(t(nn.dist)); #colnames(edges_weight) = c("B", "A", "C"); edges_weight = edges_weight[,c("A","B","C")]
-  edges$B <- edges$C;
-  if(use_dist)
-    edges$C <- 1#edges_weight$value
-  else
-    edges$C <- 1
+  # knn_graph <- NULL
+  # edges <- reshape2::melt(t(nn.index)); colnames(edges) <- c("B", "A", "C"); edges <- edges[,c("A","B","C")]
+  # edges_weight <- reshape2::melt(t(nn.dist)); #colnames(edges_weight) = c("B", "A", "C"); edges_weight = edges_weight[,c("A","B","C")]
+  # edges$B <- edges$C;
+  # if(use_dist)
+  #   edges$C <- 1#edges_weight$value
+  # else
+  #   edges$C <- 1
 
-  #Remove repetitions
-  edges = unique(transform(edges, A = pmin(A,B), B=pmax(A,B)))
+  # #Remove repetitions
+  # edges = unique(transform(edges, A = pmin(A,B), B=pmax(A,B)))
 
-  Adj <- Matrix::sparseMatrix(i = c(edges$A, edges$B), j = c(edges$B, edges$A), x = c(edges$C, edges$C), dims = c(N, N))
+  # Adj <- Matrix::sparseMatrix(i = c(edges$A, edges$B), j = c(edges$B, edges$A), x = c(edges$C, edges$C), dims = c(N, N))
 
-  knn_graph <- igraph::graph_from_adjacency_matrix(Adj, mode = "undirected", weighted = T)
+  # knn_graph <- igraph::graph_from_adjacency_matrix(Adj, mode = "undirected", weighted = T)
 
   if(verbose) {
-    message('Calculating the local density for each sample based on kNN graph')
+    message('Calculating the local density for each sample based on kNNs ...')
   }
 
-  rho <- apply(dx$nn.dist, 1, function(x) {
-      exp(-mean(x))
-    })
-  
-  
   # double combOver = distance[i] / dc;
   # double negSq = pow(combOver, 2) * -1;
   # half[i] = exp(negSq);
   # 
+  rho <- apply(dx$nn.dist, 1, function(x) {
+      exp(-mean(x))
+    })
+  
   if(verbose) {
-    message('Calculating the minimal distance of a sample to another sample with higher density')
+    message('Calculating the minimal distance of a sample to another sample with higher density ...')
   }
 
   rho_order <- order(rho)
 
   delta <- vector(mode = 'integer', length = N)
   nearest_higher_density_neighbor <- vector(mode = 'integer', length = N)
+  
   # for(i in 1:N) {
   #   dis <- igraph::shortest.paths(knn_graph, rho_order[i], rho_order[-c(1:i)], )
   #   delta[rho_order[i]] <- min(dis)
@@ -633,7 +686,7 @@ densityClust.knn <- function(mat, k = 5, use_dist = T, verbose = F, ...) {
   delta[rho_order] <- delta_neighbor_tmp$smallest_dist
   nearest_higher_density_neighbor[rho_order] <- rho_order[delta_neighbor_tmp$nearest_higher_density_sample + 1]
 
-  Adj <- Matrix::sparseMatrix(i = 1:N, j = nearest_higher_density_neighbor, x = delta, dims = c(N, N)) #create the knn graph 
+  # Adj <- Matrix::sparseMatrix(i = 1:N, j = nearest_higher_density_neighbor, x = delta, dims = c(N, N)) #create the knn graph 
   #knn_graph <- igraph::graph_from_adjacency_matrix(Adj, mode = "undirected", weighted = NULL) #weight is not necessary here 
   
   if(verbose) {
