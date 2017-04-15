@@ -51,17 +51,17 @@ test_that("Test equivalence to reference implementation of gaussianDensityClust"
   test_mat <- as.matrix(test)
   
   cluster <- test_mat[, 1]
-  newImp_res <- findDistValueByRowColInd(test, attr(test, 'Size'), which(cluster == 1), which(cluster != 1)) <= 4
+  newImp_res <- densityClust:::findDistValueByRowColInd(test, attr(test, 'Size'), which(cluster == 1), which(cluster != 1)) <= 4
   oriImp_res <- as.vector(test_mat[cluster == 1, cluster != 1] <= 4)
   
   expect_equal(newImp_res, oriImp_res )
   
-  newImp_res <- findDistValueByRowColInd(test, attr(test, 'Size'), which(cluster == 4), which(cluster == 5))
+  newImp_res <- densityClust:::findDistValueByRowColInd(test, attr(test, 'Size'), which(cluster == 4), which(cluster == 5))
   oriImp_re <- as.vector(test_mat[cluster == 4, cluster == 5])
   
   expect_equal(newImp_res, oriImp_re)
   
-  dist_vals <- findDistValueByRowColInd(test, attr(test, 'Size'), 1:100, 1:100)
+  dist_vals <- densityClust:::findDistValueByRowColInd(test, attr(test, 'Size'), 1:100, 1:100)
 
   expect_equal(dist_vals, as.vector(test_mat))
 })

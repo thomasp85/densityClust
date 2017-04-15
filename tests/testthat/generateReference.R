@@ -18,7 +18,9 @@ referenceImplementation <- function(distance, dc, gaussian=FALSE) {
    }
    rho <- reference_localDensity(distance, dc, gaussian=gaussian)
    delta <- reference_distanceToPeak(distance, rho)
-   res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA)
+   res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA, 
+               knn_graph = NA, nearest_higher_density_neighbor = NA, 
+               nn.index = NA, nn.dist = NA)
    class(res) <- 'densityCluster'
    res
 }

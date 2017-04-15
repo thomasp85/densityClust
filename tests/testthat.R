@@ -48,23 +48,7 @@
 # start_time - end_time
 # 
 # test on lung dataset:
-lung <- load_lung()
-lung <- reduceDimension(lung, reduction_method='tSNE', num_dim = 3)
-lungClust <- densityClust(t(lung@reducedDimA), gaussian=TRUE, k = 15)
-plot(lungClust) # Inspect clustering attributes to define thresholds
 
-qplot(t(lung@reducedDimA)[, 1], t(lung@reducedDimA)[, 2], color = lungClust$delta > 3)
-qplot(t(lung@reducedDimA)[, 1], t(lung@reducedDimA)[, 2], color = lungClust$delta > 2.5)
-
-lungClust <- findClusters(lungClust, rho=0.3, delta=15)
-qplot(t(lung@reducedDimA)[, 1], t(lung@reducedDimA)[, 2], color = lungClust$clusters)
-plotMDS(lungClust)
-
-lungClust <- densityClust(dist(t(lung@reducedDimA)), gaussian=TRUE, k = 15)
-plot(lungClust) # Inspect clustering attributes to define thresholds
-lungClust <- findClusters(lungClust, rho=0.3, delta=15)
-qplot(t(lung@reducedDimA)[, 1], t(lung@reducedDimA)[, 2], color = lungClust$clusters)
-plotMDS(lungClust)
 # qplot(lung@reducedDimA[1, ], lung@reducedDimA[2, ], color = pData(lung)$Time)
 # dx <- FNN::get.knn(t(lung@reducedDimA), k = 15)
 # nn.index <- dx$nn.index
@@ -120,25 +104,40 @@ plotMDS(lungClust)
 # qplot(X[, 1], X[, 2], color = clusterClust$delta > 1.4)
 # 
 # 
+# 
+# irisClust <- densityClust(iris[,1:4], verbose=TRUE, k = 15)
+# plot(irisClust)
+# irisClust <- findClusters(irisClust, rho=0.7, delta=2)
+# plotMDS(irisClust)
+# 
+# qplot(irisClust$distance[, 1], irisClust$distance[, 2], color = irisClust$clusters)
+# #test why there is still NA values for the cluster assignment for certain cells: 
+# NA_cells <- which(is.na(irisClust$clusters))
+# 
+# irisClust$nearest_higher_density_neighbor[NA_cells]
+# 
+# # lung <- load_lung()
+# lung <- reduceDimension(lung, reduction_method='tSNE', num_dim = 3)
+# lungClust <- densityClust(t(lung@reducedDimA), gaussian=TRUE, k = 10)
+# plot(lungClust) # Inspect clustering attributes to define thresholds
+# 
+# qplot(t(lung@reducedDimA)[, 1], t(lung@reducedDimA)[, 2], color = lungClust$delta > 3)
+# qplot(t(lung@reducedDimA)[, 1], t(lung@reducedDimA)[, 2], color = lungClust$delta > 2.5)
+# 
+# lungClust <- findClusters(lungClust, rho=0.3, delta=8)
+# qplot(t(lung@reducedDimA)[, 1], t(lung@reducedDimA)[, 2], color = lungClust$clusters)
+# plotMDS(lungClust)
+# 
+# lungClust <- densityClust(dist(t(lung@reducedDimA)), gaussian=TRUE, k = 7)
+# plot(lungClust) # Inspect clustering attributes to define thresholds
+# lungClust <- findClusters(lungClust, rho=0.3, delta=15)
+# qplot(t(lung@reducedDimA)[, 1], t(lung@reducedDimA)[, 2], color = lungClust$clusters)
+# plotMDS(lungClust)
 
-irisClust <- densityClust(iris[,1:4], verbose=TRUE, k = 15)
-plot(irisClust)
-irisClust <- findClusters(irisClust, rho=0.7, delta=2)
-plotMDS(irisClust)
-
-qplot(irisClust$distance[, 1], irisClust$distance[, 2], color = irisClust$clusters)
-#test why there is still NA values for the cluster assignment for certain cells: 
-NA_cells <- which(is.na(irisClust$clusters))
-
-irisClust$nearest_higher_density_neighbor[NA_cells]
-
-
-
-
-
-
-
-
+# irisClust <- densityClust(iris[,1:4], verbose=TRUE, k = 5)
+# plot(irisClust) # Inspect clustering attributes to define thresholds
+# irisClust <- findClusters(irisClust, rho=0.7, delta=2)
+# plotMDS(irisClust)
 
 
 

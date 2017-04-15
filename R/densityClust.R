@@ -190,11 +190,15 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #'   \item{peaks}{A vector of indexes specifying the cluster center for each cluster}
 #'   \item{clusters}{A vector of cluster affiliations for each observation. The clusters are referenced as indexes in the peaks vector}
 #'   \item{halo}{A logical vector specifying for each observation if it is considered part of the halo}
+#'   \item{knn_graph}{kNN graph constructed. It is only applicable to the case where coordinates are used as input. Currently it is set as NA.}
+#'   \item{nearest_higher_density_neighbor}{index for the nearest sample with higher density. It is only applicable to the case where coordinates are used as input.}
+#'   \item{nn.index}{indices for each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
+#'   \item{nn.dist}{distance to each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
 #' }
 #' Before running findClusters the threshold, peaks, clusters and halo data is 
 #' NA.
 #' 
-#' @param distance A distance matrix
+#' @param distance A distance matrix or a matrix (or data frame) for the coordinates of the data
 #' 
 #' @param dc A distance cutoff for calculating the local density. If missing it
 #' will be estimated with estimateDc(distance)
@@ -203,6 +207,8 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02) {
 #' density (defaults to FALSE)
 #' 
 #' @param verbose Logical. Should the running details be reported  
+#'
+#' @param ... Additional parameters passed into densityClust, passed into densityClust.knn function. 
 #'
 #' @return A densityCluster object. See details for a description.
 #' 
@@ -225,7 +231,7 @@ densityClust <- function(distance, dc, gaussian=FALSE, verbose = F, ...) {
   extra_arguments <- list(...)
   if(class(distance) %in% c('data.frame', 'matrix')) {
     dp_knn_args <- c(list(mat=distance, verbose = verbose),
-                  extra_arguments[names(extra_arguments) %in% c("k", "use_dist")])
+                  extra_arguments[names(extra_arguments) %in% c("k")])
     #browser()
     res <- do.call(densityClust.knn, dp_knn_args)
     return(res)
@@ -250,11 +256,12 @@ densityClust <- function(distance, dc, gaussian=FALSE, verbose = F, ...) {
     if(verbose) {
       message('Returning result...')
     }
-    res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA)
+    res <- list(rho=rho, delta=delta, distance=distance, dc=dc, threshold=c(rho=NA, delta=NA), peaks=NA, clusters=NA, halo=NA, knn_graph = NA, nearest_higher_density_neighbor = NA, nn.index = NA, nn.dist = NA)
     class(res) <- 'densityCluster'
     res
   }
 }
+
 #' @export
 #' @importFrom graphics plot points
 #' @noRd
@@ -377,8 +384,6 @@ findClusters <- function (x, ...) {
 #' @param peaks A numeric vector indicates the index of density peaks used for clustering. This vector should be retrieved from the decision plot with caution. No checking involved.  
 #'
 #' @param verbose Logical. Should the running details be reported  
-#'
-#' @param ... Additional parameters. Currently ignored
 #'
 #' @export
 #' @importFrom graphics plot locator
@@ -633,15 +638,15 @@ labels.densityCluster <- function(object, ...) {
 #' plot(irisClust) # Inspect clustering attributes to define thresholds
 #' 
 #' # for large dataset, plotMDS function is not suggested. 
-#' irisClust <- findClusters(irisClust, rho=0.8, delta=2)
-#' plot(iris[,1], iris[,2], xlab='', ylab='', main='MDS plot of observations')
-#' if(!is.na(irisClust$peaks[1])) {
-#'     for(i in 1:length(x$peaks)) {
-#'         ind <- which(irisClust$clusters == i)
-#'        points(mds[ind, 1], mds[ind, 2], col=i+1, pch=ifelse(x$halo[ind], 1, 19))
-#'     }
-#'     legend('topright', legend=c('core', 'halo'), pch=c(19, 1), horiz=TRUE)
-#' }
+#' irisClust <- findClusters(irisClust, rho=0.65, delta=2)
+# plot(iris[,1], iris[,2], xlab='', ylab='', main='MDS plot of observations')
+# if(!is.na(irisClust$peaks[1])) {
+#     for(i in 1:length(x$peaks)) {
+#         ind <- which(irisClust$clusters == i)
+#        points(iris[ind, 1], iris[ind, 2], col=i+1, pch=ifelse(irisClust$halo[ind], 1, 19))
+#     }
+#     legend('topright', legend=c('core', 'halo'), pch=c(19, 1), horiz=TRUE)
+# }
 #'
 #' split(iris[,5], irisClust$clusters)
 #' 
@@ -651,7 +656,7 @@ labels.densityCluster <- function(object, ...) {
 #' 
 #' @export
 #' 
-densityClust.knn <- function(mat, k = 5, verbose = F, ...) {
+densityClust.knn <- function(mat, k = 0.1 * nrow(mat), verbose = F, ...) {
   if(verbose) {
     message('Finding kNN using FNN ...')
   }

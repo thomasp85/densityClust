@@ -24,8 +24,6 @@ findClusters(x, ...)
 \item{peaks}{A numeric vector indicates the index of density peaks used for clustering. This vector should be retrieved from the decision plot with caution. No checking involved.}
 
 \item{verbose}{Logical. Should the running details be reported}
-
-\item{...}{Additional parameters. Currently ignored}
 }
 \value{
 A densityCluster object with clusters assigned to all observations

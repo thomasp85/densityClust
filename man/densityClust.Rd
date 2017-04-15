@@ -7,7 +7,7 @@
 densityClust(distance, dc, gaussian = FALSE, verbose = F, ...)
 }
 \arguments{
-\item{distance}{A distance matrix}
+\item{distance}{A distance matrix or a matrix (or data frame) for the coordinates of the data}
 
 \item{dc}{A distance cutoff for calculating the local density. If missing it
 will be estimated with estimateDc(distance)}
@@ -16,6 +16,8 @@ will be estimated with estimateDc(distance)}
 density (defaults to FALSE)}
 
 \item{verbose}{Logical. Should the running details be reported}
+
+\item{...}{Additional parameters passed into densityClust, passed into densityClust.knn function.}
 }
 \value{
 A densityCluster object. See details for a description.
@@ -42,6 +44,10 @@ The information kept in the densityCluster object is:
   \item{peaks}{A vector of indexes specifying the cluster center for each cluster}
   \item{clusters}{A vector of cluster affiliations for each observation. The clusters are referenced as indexes in the peaks vector}
   \item{halo}{A logical vector specifying for each observation if it is considered part of the halo}
+  \item{knn_graph}{kNN graph constructed. It is only applicable to the case where coordinates are used as input. Currently it is set as NA.}
+  \item{nearest_higher_density_neighbor}{index for the nearest sample with higher density. It is only applicable to the case where coordinates are used as input.}
+  \item{nn.index}{indices for each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
+  \item{nn.dist}{distance to each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
 }
 Before running findClusters the threshold, peaks, clusters and halo data is 
 NA.
