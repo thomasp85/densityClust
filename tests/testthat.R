@@ -126,4 +126,20 @@ plot(irisClust)
 irisClust <- findClusters(irisClust, rho=0.7, delta=2)
 plotMDS(irisClust)
 
+qplot(irisClust$distance[, 1], irisClust$distance[, 2], color = irisClust$clusters)
+#test why there is still NA values for the cluster assignment for certain cells: 
+NA_cells <- which(is.na(irisClust$clusters))
+
+irisClust$nearest_higher_density_neighbor[NA_cells]
+
+
+
+
+
+
+
+
+
+
+
 

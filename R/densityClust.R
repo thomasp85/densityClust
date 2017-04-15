@@ -407,6 +407,12 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, v
           cluster[ind] <- cluster[x$nearest_higher_density_neighbor[ind]]
       }
       
+      potential_duplicates <- which(is.na(cluster))
+      for(ind in potential_duplicates) {
+        warning('Assign clusters to "potential duplicates" to your data ...')
+        cluster[ind] <- as.integer(names(which.max(table(cluster[x$nn.index[ind, ]])))) #assign NA samples to the majority of its clusters 
+      }
+      
       x$clusters <- factor(cluster)
 
       # Calculate core/halo status of observation
