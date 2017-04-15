@@ -306,6 +306,7 @@ plotMDS <- function (x, ...) {
 #' @export
 #' @importFrom stats cmdscale
 #' @importFrom graphics plot points legend
+#' @importFrom stats dist
 #' @noRd
 #' 
 plotMDS.densityCluster <- function(x, ...) {
@@ -625,7 +626,9 @@ labels.densityCluster <- function(object, ...) {
 #' @param mat The coordinates of each sample
 #' 
 #' @param k The number of nearest neighbors used to calculate the local density, 
-#' similar to the distance threshold discussed in the original study.
+#' similar to the distance threshold discussed in the original study. Default is 10% of
+#' the number of your sample. A connected graph is required for assigning clusters so 
+#' k is be sufficient large but also should be too big to avoid the computational burden.  
 #' 
 #' @param verbose Logical. Should the detailed running information displayed? 
 #' 
