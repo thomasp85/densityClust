@@ -659,9 +659,9 @@ labels.densityCluster <- function(object, ...) {
 #' 
 #' @export
 #' 
-densityClust.knn <- function(mat, k = 0.1 * nrow(mat), verbose = F, ...) {
+densityClust.knn <- function(mat, k = 0.01 * nrow(mat), verbose = F, ...) {
   if(verbose) {
-    message('Finding kNN using FNN ...')
+    message(paste('Finding kNN using FNN with', k, 'neighbors'))
   }
  
   dx <- FNN::get.knn(mat, k = k, ...)
