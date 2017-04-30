@@ -17,10 +17,10 @@ estimateDc(distance, neighborRateLow = 0.01, neighborRateHigh = 0.02)
 A numeric value giving the estimated distance cutoff value
 }
 \description{
-This function calculates a distance cutoff value for a specific distance 
+This function calculates a distance cutoff value for a specific distance
 matrix that makes the average neighbor rate (number of points within the
 distance cutoff value) fall between the provided range. The authors of the
-algorithm suggests aiming for a neighbor rate between 1 and 2 percent, but 
+algorithm suggests aiming for a neighbor rate between 1 and 2 percent, but
 also states that the algorithm is quite robust with regards to more extreme
 cases.
 }

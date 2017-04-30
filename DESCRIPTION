@@ -16,5 +16,10 @@ Suggests:
     testthat
 LinkingTo: Rcpp
 Imports:
-    Rcpp
-RoxygenNote: 5.0.1
+    Rcpp,
+    ggplot2,
+    ggrepel,
+    grDevices,
+    gridExtra,
+    RColorBrewer
+RoxygenNote: 5.0.1.9000
