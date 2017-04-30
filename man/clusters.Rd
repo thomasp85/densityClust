@@ -25,18 +25,17 @@ initial distance matrix
 }
 \description{
 This function allows the user to extract the cluster membership of all the
-observations in the given densityCluster object. The output can be formatted 
+observations in the given densityCluster object. The output can be formatted
 in two ways as described below. Halo observations can be chosen to be removed
 from the output.
 }
 \details{
-Two formats for the output are available. Either a vector of integers 
-denoting for each observation, which cluster the observation belongs to. If 
-halo observations are removed, these are set to NA. The second format is a 
-list with a vector for each group containing the index for the member 
+Two formats for the output are available. Either a vector of integers
+denoting for each observation, which cluster the observation belongs to. If
+halo observations are removed, these are set to NA. The second format is a
+list with a vector for each group containing the index for the member
 observations in the group. If halo observations are removed their indexes are
-omitted. The list format correspond to the following transform of the vector 
-format \code{split(1:length(clusters), clusters)}, where \code{clusters} are 
+omitted. The list format correspond to the following transform of the vector
+format \code{split(1:length(clusters), clusters)}, where \code{clusters} are
 the cluster information in vector format.
 }
-
