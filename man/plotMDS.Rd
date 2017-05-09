@@ -31,4 +31,3 @@ split(iris[,5], irisClust$clusters)
 \seealso{
 \code{\link{densityClust}}
 }
-
