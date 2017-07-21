@@ -15,5 +15,10 @@ Suggests:
 LinkingTo: Rcpp
 Imports:
     Rcpp, 
-    FNN
+    FNN, 
+    ggplot2,
+    ggrepel,
+    grDevices,
+    gridExtra,
+    RColorBrewer
 RoxygenNote: 6.0.1

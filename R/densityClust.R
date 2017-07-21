@@ -69,7 +69,6 @@ NULL
 localDensity <- function(distance, dc, gaussian=FALSE) {
    # These implementations are faster by virtue of being written in C++
    # They also avoid the need to convert `distance` to a matrix. 
-  
    if(gaussian) {
       res <- gaussianLocalDensity(distance, attr(distance, "Size"), dc)
    } else {
