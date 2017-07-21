@@ -69,3 +69,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
+static const R_CallMethodDef CallEntries[] = {
+    {"densityClust_distanceToPeakCpp", (DL_FUNC) &densityClust_distanceToPeakCpp, 2},
+    {"densityClust_findDistValueByRowColInd", (DL_FUNC) &densityClust_findDistValueByRowColInd, 4},
+    {"densityClust_smallest_dist_rho_order_coords", (DL_FUNC) &densityClust_smallest_dist_rho_order_coords, 2},
+    {"densityClust_gaussianLocalDensity", (DL_FUNC) &densityClust_gaussianLocalDensity, 3},
+    {"densityClust_nonGaussianLocalDensity", (DL_FUNC) &densityClust_nonGaussianLocalDensity, 3},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_densityClust(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}

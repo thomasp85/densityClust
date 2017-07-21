@@ -4,7 +4,8 @@
 \alias{estimateDc}
 \title{Estimate the distance cutoff for a specified neighbor rate}
 \usage{
-estimateDc(distance, neighborRateLow = 0.01, neighborRateHigh = 0.02)
+estimateDc(distance, neighborRateLow = 0.01, neighborRateHigh = 0.02,
+  seed = NULL)
 }
 \arguments{
 \item{distance}{A distance matrix}
