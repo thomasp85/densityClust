@@ -12,7 +12,7 @@ densityClust(distance, dc, gaussian = FALSE, verbose = FALSE, ...)
 \item{dc}{A distance cutoff for calculating the local density. If missing it
 will be estimated with estimateDc(distance)}
 
-\item{gaussian}{Logical. Should a gaussian kernel be used to estimate the 
+\item{gaussian}{Logical. Should a gaussian kernel be used to estimate the
 density (defaults to FALSE)}
 
 \item{verbose}{Logical. Should the running details be reported}
@@ -23,14 +23,14 @@ density (defaults to FALSE)}
 A densityCluster object. See details for a description.
 }
 \description{
-This function takes a distance matrix and optionally a distance cutoff and 
-calculates the values necessary for clustering based on the algorithm 
-proposed by Alex Rodrigues and Alessandro Laio (see references). The actual 
-assignment to clusters are done in a later step, based on user defined 
+This function takes a distance matrix and optionally a distance cutoff and
+calculates the values necessary for clustering based on the algorithm
+proposed by Alex Rodrigues and Alessandro Laio (see references). The actual
+assignment to clusters are done in a later step, based on user defined
 threshold values.
 }
 \details{
-The function calculates rho and delta for the observations in the provided 
+The function calculates rho and delta for the observations in the provided
 distance matrix. If a distance cutoff is not provided this is first estimated
 using \code{\link{estimateDc}} with default values.
 
@@ -49,7 +49,7 @@ The information kept in the densityCluster object is:
   \item{nn.index}{indices for each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
   \item{nn.dist}{distance to each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
 }
-Before running findClusters the threshold, peaks, clusters and halo data is 
+Before running findClusters the threshold, peaks, clusters and halo data is
 NA.
 }
 \examples{
