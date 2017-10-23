@@ -366,6 +366,7 @@ plotTSNE <- function (x, ...) {
 #' @export
 #' @importFrom graphics plot points legend
 #' @importFrom stats dist
+#' @importFrom stats rnorm
 #' @importFrom Rtsne Rtsne
 #' @noRd
 #' 
