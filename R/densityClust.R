@@ -116,6 +116,8 @@ distanceToPeak <- function(distance, rho) {
 #' 
 #' @param neighborRateHigh The upper bound of the neighbor rate
 #' 
+#' @param seed A numeric value specifying the seed 
+#'
 #' @return A numeric value giving the estimated distance cutoff value
 #' 
 #' @examples
@@ -136,7 +138,11 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02, se
    if(size > 448) {
       # ensure the consistency of clustering result
       if(! is.null(seed)) {
-        set.seed(2017) 
+        if(! is.numeric(seed)) {
+          stop('Seed need to be a numeric value')
+        }
+
+        set.seed(seed) 
       }
       else {
         warning('random sampling 100128 points, please pass a number for the seed argument to ensure consistency')
@@ -231,7 +237,7 @@ estimateDc <- function(distance, neighborRateLow=0.01, neighborRateHigh=0.02, se
 #' 
 #' @export
 #' 
-densityClust <- function(distance, dc, gaussian=FALSE, verbose = F, ...) {
+densityClust <- function(distance, dc, gaussian=FALSE, verbose = FALSE, ...) {
   extra_arguments <- list(...)
   if(class(distance) %in% c('data.frame', 'matrix')) {
     dp_knn_args <- c(list(mat=distance, verbose = verbose),
@@ -280,7 +286,7 @@ plot.densityCluster <- function(x, ...) {
 #' 
 #' This function produces an MDS scatterplot based on the distance matrix of the
 #' densityCluster object (if there is only the coordinates information, a distance
-#' matrix will be calculate firstly), and, if clusters are defined, colours each 
+#' matrix will be calculate first), and, if clusters are defined, colours each 
 #' observation according to cluster affiliation. Observations belonging to a cluster
 #' core is plotted with filled circles and observations belonging to the halo with
 #' hollow circles. This plotting is not suitable for running large datasets (for example
@@ -355,7 +361,7 @@ plotMDS.densityCluster <- function(x, ...) {
 #' @export
 #' 
 plotTSNE <- function (x, ...) {
-    UseMethod("plotTSNE", x)
+    UseMethod("plotTSNE")
 }
 #' @export
 #' @importFrom graphics plot points legend
@@ -452,7 +458,7 @@ findClusters <- function (x, ...) {
 #'
 #' @export
 #' @importFrom graphics plot locator
-findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, verbose = F, ...) {
+findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, verbose = FALSE, ...) {
     if(class(x$distance) %in% c('data.frame', 'matrix')) {
       peak_ind <- which(x$rho > rho & x$delta > delta)
       x$peaks <- peak_ind

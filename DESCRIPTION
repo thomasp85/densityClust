@@ -16,9 +16,5 @@ LinkingTo: Rcpp
 Imports:
     Rcpp, 
     FNN, 
-    ggplot2,
-    ggrepel,
-    grDevices,
-    gridExtra,
-    RColorBrewer
+    Rtsne
 RoxygenNote: 6.0.1
