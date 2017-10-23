@@ -477,8 +477,14 @@ findClusters.densityCluster <- function(x, rho, delta, plot=FALSE, peaks=NULL, v
       
       potential_duplicates <- which(is.na(cluster))
       for(ind in potential_duplicates) {
-        warning('Assign clusters to "potential duplicates" to your data ...')
-        cluster[ind] <- as.integer(names(which.max(table(cluster[x$nn.index[ind, ]])))) #assign NA samples to the majority of its clusters 
+        res <- as.integer(names(which.max(table(cluster[x$nn.index[ind, ]]))))
+        
+        if(length(res) > 0) {
+          cluster[ind] <- res #assign NA samples to the majority of its clusters 
+        } else {
+          message('try to increase the number of kNN (through argument k) at step of densityClust.')
+          cluster[ind] <- NA
+        }
       }
       
       x$clusters <- factor(cluster)
@@ -714,8 +720,9 @@ labels.densityCluster <- function(object, ...) {
 #' @export
 #' 
 densityClust.knn <- function(mat, k = NULL, verbose = F, ...) {
-  if(is.null(K)) {
-    k = round(sqrt(nrow(mat)) / 2) # empirical way to select the number of neighbor points 
+  if(is.null(k)) {
+    k <- round(sqrt(nrow(mat)) / 2) # empirical way to select the number of neighbor points 
+    k <- max(10, k) # ensure k is at least 10 
   }  
   
   if(verbose) {

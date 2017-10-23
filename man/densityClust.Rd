@@ -4,7 +4,7 @@
 \alias{densityClust}
 \title{Calculate clustering attributes based on the densityClust algorithm}
 \usage{
-densityClust(distance, dc, gaussian = FALSE, verbose = F, ...)
+densityClust(distance, dc, gaussian = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{distance}{A distance matrix or a matrix (or data frame) for the coordinates of the data}
