@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // distanceToPeakCpp
 NumericVector distanceToPeakCpp(NumericVector distance, NumericVector rho);
-RcppExport SEXP _densityClust_distanceToPeakCpp(SEXP distanceSEXP, SEXP rhoSEXP) {
+RcppExport SEXP densityClust_distanceToPeakCpp(SEXP distanceSEXP, SEXP rhoSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,13 +18,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // findDistValueByRowColInd
-NumericVector findDistValueByRowColInd(NumericVector distance, size_t num_row, NumericVector row_inds, NumericVector col_inds);
-RcppExport SEXP _densityClust_findDistValueByRowColInd(SEXP distanceSEXP, SEXP num_rowSEXP, SEXP row_indsSEXP, SEXP col_indsSEXP) {
+NumericVector findDistValueByRowColInd(NumericVector distance, int num_row, NumericVector row_inds, NumericVector col_inds);
+RcppExport SEXP densityClust_findDistValueByRowColInd(SEXP distanceSEXP, SEXP num_rowSEXP, SEXP row_indsSEXP, SEXP col_indsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type distance(distanceSEXP);
-    Rcpp::traits::input_parameter< size_t >::type num_row(num_rowSEXP);
+    Rcpp::traits::input_parameter< int >::type num_row(num_rowSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type row_inds(row_indsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type col_inds(col_indsSEXP);
     rcpp_result_gen = Rcpp::wrap(findDistValueByRowColInd(distance, num_row, row_inds, col_inds));
@@ -33,7 +33,7 @@ END_RCPP
 }
 // smallest_dist_rho_order_coords
 List smallest_dist_rho_order_coords(NumericVector ordered_rho, NumericVector ordered_coords);
-RcppExport SEXP _densityClust_smallest_dist_rho_order_coords(SEXP ordered_rhoSEXP, SEXP ordered_coordsSEXP) {
+RcppExport SEXP densityClust_smallest_dist_rho_order_coords(SEXP ordered_rhoSEXP, SEXP ordered_coordsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -44,26 +44,26 @@ BEGIN_RCPP
 END_RCPP
 }
 // gaussianLocalDensity
-NumericVector gaussianLocalDensity(NumericVector distance, size_t nrow, double dc);
-RcppExport SEXP _densityClust_gaussianLocalDensity(SEXP distanceSEXP, SEXP nrowSEXP, SEXP dcSEXP) {
+NumericVector gaussianLocalDensity(NumericVector distance, int nrow, double dc);
+RcppExport SEXP densityClust_gaussianLocalDensity(SEXP distanceSEXP, SEXP nrowSEXP, SEXP dcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type distance(distanceSEXP);
-    Rcpp::traits::input_parameter< size_t >::type nrow(nrowSEXP);
+    Rcpp::traits::input_parameter< int >::type nrow(nrowSEXP);
     Rcpp::traits::input_parameter< double >::type dc(dcSEXP);
     rcpp_result_gen = Rcpp::wrap(gaussianLocalDensity(distance, nrow, dc));
     return rcpp_result_gen;
 END_RCPP
 }
 // nonGaussianLocalDensity
-NumericVector nonGaussianLocalDensity(NumericVector distance, size_t nrow, double dc);
-RcppExport SEXP _densityClust_nonGaussianLocalDensity(SEXP distanceSEXP, SEXP nrowSEXP, SEXP dcSEXP) {
+NumericVector nonGaussianLocalDensity(NumericVector distance, int nrow, double dc);
+RcppExport SEXP densityClust_nonGaussianLocalDensity(SEXP distanceSEXP, SEXP nrowSEXP, SEXP dcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type distance(distanceSEXP);
-    Rcpp::traits::input_parameter< size_t >::type nrow(nrowSEXP);
+    Rcpp::traits::input_parameter< int >::type nrow(nrowSEXP);
     Rcpp::traits::input_parameter< double >::type dc(dcSEXP);
     rcpp_result_gen = Rcpp::wrap(nonGaussianLocalDensity(distance, nrow, dc));
     return rcpp_result_gen;
@@ -71,11 +71,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_densityClust_distanceToPeakCpp", (DL_FUNC) &_densityClust_distanceToPeakCpp, 2},
-    {"_densityClust_findDistValueByRowColInd", (DL_FUNC) &_densityClust_findDistValueByRowColInd, 4},
-    {"_densityClust_smallest_dist_rho_order_coords", (DL_FUNC) &_densityClust_smallest_dist_rho_order_coords, 2},
-    {"_densityClust_gaussianLocalDensity", (DL_FUNC) &_densityClust_gaussianLocalDensity, 3},
-    {"_densityClust_nonGaussianLocalDensity", (DL_FUNC) &_densityClust_nonGaussianLocalDensity, 3},
+    {"densityClust_distanceToPeakCpp", (DL_FUNC) &densityClust_distanceToPeakCpp, 2},
+    {"densityClust_findDistValueByRowColInd", (DL_FUNC) &densityClust_findDistValueByRowColInd, 4},
+    {"densityClust_smallest_dist_rho_order_coords", (DL_FUNC) &densityClust_smallest_dist_rho_order_coords, 2},
+    {"densityClust_gaussianLocalDensity", (DL_FUNC) &densityClust_gaussianLocalDensity, 3},
+    {"densityClust_nonGaussianLocalDensity", (DL_FUNC) &densityClust_nonGaussianLocalDensity, 3},
     {NULL, NULL, 0}
 };
 
