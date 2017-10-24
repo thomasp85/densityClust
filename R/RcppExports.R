@@ -2,22 +2,22 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 distanceToPeakCpp <- function(distance, rho) {
-    .Call('_densityClust_distanceToPeakCpp', PACKAGE = 'densityClust', distance, rho)
+    .Call('densityClust_distanceToPeakCpp', PACKAGE = 'densityClust', distance, rho)
 }
 
 findDistValueByRowColInd <- function(distance, num_row, row_inds, col_inds) {
-    .Call('_densityClust_findDistValueByRowColInd', PACKAGE = 'densityClust', distance, num_row, row_inds, col_inds)
+    .Call('densityClust_findDistValueByRowColInd', PACKAGE = 'densityClust', distance, num_row, row_inds, col_inds)
 }
 
 smallest_dist_rho_order_coords <- function(ordered_rho, ordered_coords) {
-    .Call('_densityClust_smallest_dist_rho_order_coords', PACKAGE = 'densityClust', ordered_rho, ordered_coords)
+    .Call('densityClust_smallest_dist_rho_order_coords', PACKAGE = 'densityClust', ordered_rho, ordered_coords)
 }
 
 gaussianLocalDensity <- function(distance, nrow, dc) {
-    .Call('_densityClust_gaussianLocalDensity', PACKAGE = 'densityClust', distance, nrow, dc)
+    .Call('densityClust_gaussianLocalDensity', PACKAGE = 'densityClust', distance, nrow, dc)
 }
 
 nonGaussianLocalDensity <- function(distance, nrow, dc) {
-    .Call('_densityClust_nonGaussianLocalDensity', PACKAGE = 'densityClust', distance, nrow, dc)
+    .Call('densityClust_nonGaussianLocalDensity', PACKAGE = 'densityClust', distance, nrow, dc)
 }
 
