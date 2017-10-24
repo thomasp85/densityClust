@@ -13,10 +13,10 @@ clustered(x)
 \item{x}{A densityCluster object}
 }
 \value{
-TRUE if \code{\link{findClusters}} have been performed, otherwise
-FALSE
+\code{TRUE} if \code{\link[=findClusters]{findClusters()}} have been performed, otherwise
+\code{FALSE}
 }
 \description{
-This function checks whether \code{\link{findClusters}} has been performed on
+This function checks whether \code{\link[=findClusters]{findClusters()}} has been performed on
 the given object and returns a boolean depending on the outcome
 }
