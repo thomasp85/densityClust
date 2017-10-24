@@ -2,8 +2,6 @@
 % Please edit documentation in R/densityClust.R
 \docType{package}
 \name{densityClust-package}
-\alias{densityClust}
-\alias{densityClust-package}
 \title{Clustering by fast search and find of density peaks}
 \description{
 This package implement the clustering algorithm described by Alex Rodriguez
