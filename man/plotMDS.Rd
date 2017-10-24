@@ -13,10 +13,13 @@ plotMDS(x, ...)
 }
 \description{
 This function produces an MDS scatterplot based on the distance matrix of the
-densityCluster object, and, if clusters are defined, colours each observation
-according to cluster affiliation. Observations belonging to a cluster core is
-plotted with filled circles and observations belonging to the halo with
-hollow circles.
+densityCluster object (if there is only the coordinates information, a distance
+matrix will be calculate first), and, if clusters are defined, colours each 
+observation according to cluster affiliation. Observations belonging to a cluster
+core is plotted with filled circles and observations belonging to the halo with
+hollow circles. This plotting is not suitable for running large datasets (for example
+datasets with > 1000 samples). Users are suggested to use other methods, for example
+tSNE, etc. to visualize their clustering results too.
 }
 \examples{
 irisDist <- dist(iris[,1:4])
