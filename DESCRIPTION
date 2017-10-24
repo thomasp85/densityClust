@@ -7,7 +7,7 @@ Authors@R: c(
   person("Thomas Lin", "Pedersen", email = "thomasp85@gmail.com", role = c("aut", "cre")),
   person("Sean", "Hughes", email = "", role = c("aut")),
   person("Xiaojie", "Qiu", email = "xqiu@uw.edu", role = c("aut")))
-Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>; Xiaojie Qiu <xqiu@uw.edu>
+Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
 Description: An improved implementation (based on k-nearest neighbors) of the 
     density peak clustering algorithm, originally described by Alex Rodriguez 
     and Alessandro Laio (Science, 2014 vol. 344). It can handle large datasets
