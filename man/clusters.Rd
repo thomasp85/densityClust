@@ -10,7 +10,7 @@ clusters(x, ...)
 \method{clusters}{densityCluster}(x, as.list = FALSE, halo.rm = TRUE, ...)
 }
 \arguments{
-\item{x}{The densityCluster object. \code{\link{findClusters}} must have
+\item{x}{The densityCluster object. \code{\link[=findClusters]{findClusters()}} must have
 been performed prior to this call to avoid throwing an error.}
 
 \item{...}{Currently ignored}
