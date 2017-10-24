@@ -34,13 +34,13 @@ decision graph and MDS plot.}
 }
 \value{
 A panel of the figures specified in \code{type} are produced.
-  If designated, clusters are color-coded and labelled. If present in
-  \code{x}, the rho and delta thresholds are designated in the
-  decision graph by a set of solid black lines.
+If designated, clusters are color-coded and labelled. If present in
+\code{x}, the rho and delta thresholds are designated in the
+decision graph by a set of solid black lines.
 }
 \description{
 Generate a single panel of up to three diagnostic plots for a
-  \code{densityClust} object.
+\code{densityClust} object.
 }
 \examples{
 data(iris)
