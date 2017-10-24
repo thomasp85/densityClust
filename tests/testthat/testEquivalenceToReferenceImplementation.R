@@ -1,8 +1,8 @@
 set.seed(123)
 dists <- list(
-   dist(matrix(stats::rnorm(1000), ncol = 4)),
-   dist(matrix(stats::rnorm(1000), ncol = 20)),
-   dist(matrix(stats::rnorm(10000), ncol = 40)),
+   dist(matrix(rnorm(1000), ncol = 4)),
+   dist(matrix(rnorm(1000), ncol = 20)),
+   dist(matrix(rnorm(10000), ncol = 40)),
    dist(matrix(sample(1:100000, 1000), ncol = 4)),
    dist(matrix(sample(1:100000, 1000), ncol = 20)),
    dist(matrix(sample(1:100000, 1000), ncol = 50))
