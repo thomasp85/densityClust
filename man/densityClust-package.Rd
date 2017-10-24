@@ -2,6 +2,7 @@
 % Please edit documentation in R/densityClust.R
 \docType{package}
 \name{densityClust-package}
+\alias{densityClust}
 \alias{densityClust-package}
 \title{Clustering by fast search and find of density peaks}
 \description{
@@ -12,26 +13,27 @@ to assign observations to clusters. This is done in two passes so the user is
 free to reassign observations to clusters using a new set of rho and delta
 thresholds, without needing to recalculate everything.
 }
-\details{
-Plotting
+\section{Plotting}{
 
 Two types of plots are supported by this package, and both mimics the types of
 plots used in the publication for the algorithm. The standard plot function
 produces a decision plot, with optional colouring of cluster peaks if these
-are assigned. Furthermore \code{\link{plotMDS}} performs a multidimensional
+are assigned. Furthermore \code{\link[=plotMDS]{plotMDS()}} performs a multidimensional
 scaling of the distance matrix and plots this as a scatterplot. If clusters
 are assigned observations are coloured according to their assignment.
+}
 
-Cluster detection
+\section{Cluster detection}{
 
-The two main functions for this package are \code{\link{densityClust}} and
-\code{\link{findClusters}}. The former takes a distance matrix and optionally
+The two main functions for this package are \code{\link[=densityClust]{densityClust()}} and
+\code{\link[=findClusters]{findClusters()}}. The former takes a distance matrix and optionally
 a distance cutoff and calculates rho and delta for each observation. The
-latter takes the output of \code{\link{densityClust}} and make cluster
+latter takes the output of \code{\link[=densityClust]{densityClust()}} and make cluster
 assignment for each observation based on a user defined rho and delta
 threshold. If the thresholds are not specified the user is able to supply
 them interactively by clicking on a decision plot.
 }
+
 \examples{
 irisDist <- dist(iris[,1:4])
 irisClust <- densityClust(irisDist, gaussian=TRUE)
@@ -43,8 +45,18 @@ split(iris[,5], irisClust$clusters)
 
 }
 \references{
-Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
+Rodriguez, A., & Laio, A. (2014). \emph{Clustering by fast search and find of density peaks.} Science, \strong{344}(6191), 1492-1496. doi:10.1126/science.1242072
 }
 \seealso{
-\code{\link{densityClust}}, \code{\link{findClusters}}, \code{\link{plotMDS}}
+\code{\link[=densityClust]{densityClust()}}, \code{\link[=findClusters]{findClusters()}}, \code{\link[=plotMDS]{plotMDS()}}
+}
+\author{
+\strong{Maintainer}: Thomas Lin Pedersen \email{thomasp85@gmail.com}
+
+Authors:
+\itemize{
+  \item Sean Hughes
+  \item Xiaojie Qiu \email{xqiu@uw.edu}
+}
+
 }
