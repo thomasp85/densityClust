@@ -2,21 +2,21 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector gaussianLocalDensity(NumericVector distance, size_t nrow, double dc) {
-  size_t size = distance.size();
+NumericVector gaussianLocalDensity(NumericVector distance, int nrow, double dc) {
+  int size = distance.size();
   NumericVector half(size);
-  for (size_t i = 0; i < size; i++) {
+  for (int i = 0; i < size; i++) {
     double combOver = distance[i] / dc;
     double negSq = pow(combOver, 2) * -1;
     half[i] = exp(negSq);
   }     
-  size_t ncol = nrow;
+  int ncol = nrow;
   
   NumericVector result(nrow);
   
-  size_t i = 0;
-  for (size_t col = 0; col < ncol; col++) {
-    for (size_t row = col + 1; row < nrow; row++) {
+  int i = 0;
+  for (int col = 0; col < ncol; col++) {
+    for (int row = col + 1; row < nrow; row++) {
       double temp = half[i];
       result[row] += temp;
       result[col] += temp;
@@ -28,12 +28,12 @@ NumericVector gaussianLocalDensity(NumericVector distance, size_t nrow, double d
 }
 
 // [[Rcpp::export]]
-NumericVector nonGaussianLocalDensity(NumericVector distance, size_t nrow, double dc) {
-  size_t ncol = nrow;
+NumericVector nonGaussianLocalDensity(NumericVector distance, int nrow, double dc) {
+  int ncol = nrow;
   NumericVector result(nrow);
-  size_t i = 0;
-  for (size_t col = 0; col < ncol; col++) {
-    for (size_t row = col + 1; row < nrow; row++) {
+  int i = 0;
+  for (int col = 0; col < ncol; col++) {
+    for (int row = col + 1; row < nrow; row++) {
       if((i % 10000) == 0){
         // if(verbose){
         // Rcout << "index is " << i << " distance under the current index " << distance[i] << std::endl;
