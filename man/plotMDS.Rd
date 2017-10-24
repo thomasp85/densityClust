@@ -7,14 +7,14 @@
 plotMDS(x, ...)
 }
 \arguments{
-\item{x}{A densityCluster object as produced by \code{\link{densityClust}}}
+\item{x}{A densityCluster object as produced by \code{\link[=densityClust]{densityClust()}}}
 
 \item{...}{Additional parameters. Currently ignored}
 }
 \description{
 This function produces an MDS scatterplot based on the distance matrix of the
 densityCluster object (if there is only the coordinates information, a distance
-matrix will be calculate first), and, if clusters are defined, colours each 
+matrix will be calculate first), and, if clusters are defined, colours each
 observation according to cluster affiliation. Observations belonging to a cluster
 core is plotted with filled circles and observations belonging to the halo with
 hollow circles. This plotting is not suitable for running large datasets (for example
@@ -32,5 +32,6 @@ split(iris[,5], irisClust$clusters)
 
 }
 \seealso{
-\code{\link{densityClust}}
+\code{\link[=densityClust]{densityClust()}} for creating \code{densityCluster}
+objects, and \code{\link[=plotTSNE]{plotTSNE()}} for an alternative plotting approach.
 }
