@@ -4,13 +4,13 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector distanceToPeakCpp(NumericVector distance, NumericVector rho) {
-  size_t size = rho.size();
+  int size = rho.size();
   NumericVector peaks(size);
   NumericVector maximum(size);
   
-  size_t i = 0;
-  for (size_t col = 0; col < size; col++) {
-    for (size_t row = col + 1; row < size; row++) {
+  int i = 0;
+  for (int col = 0; col < size; col++) {
+    for (int row = col + 1; row < size; row++) {
       double newValue = distance[i];
       double rhoRow = rho[row];
       double rhoCol = rho[col];
@@ -36,7 +36,7 @@ NumericVector distanceToPeakCpp(NumericVector distance, NumericVector rho) {
     }
   }
   
-  for (size_t j = 0; j < size; j++) {
+  for (int j = 0; j < size; j++) {
     if (peaks[j] == 0) {
       peaks[j] = maximum[j];
     } else {
