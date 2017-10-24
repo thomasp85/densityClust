@@ -7,17 +7,19 @@
 densityClust(distance, dc, gaussian = FALSE, verbose = FALSE, ...)
 }
 \arguments{
-\item{distance}{A distance matrix or a matrix (or data frame) for the coordinates of the data}
+\item{distance}{A distance matrix or a matrix (or data.frame) for the
+coordinates of the data. If a matrix or data.frame is used the distances and
+local density will be estimated using a fast k-nearest neighbor approach.}
 
 \item{dc}{A distance cutoff for calculating the local density. If missing it
-will be estimated with estimateDc(distance)}
+will be estimated with \code{estimateDc(distance)}}
 
 \item{gaussian}{Logical. Should a gaussian kernel be used to estimate the
 density (defaults to FALSE)}
 
 \item{verbose}{Logical. Should the running details be reported}
 
-\item{...}{Additional parameters passed into densityClust, passed into densityClust.knn function.}
+\item{...}{Additional parameters passed on to \link[FNN:get.knn]{get.knn}}
 }
 \value{
 A densityCluster object. See details for a description.
@@ -27,30 +29,36 @@ This function takes a distance matrix and optionally a distance cutoff and
 calculates the values necessary for clustering based on the algorithm
 proposed by Alex Rodrigues and Alessandro Laio (see references). The actual
 assignment to clusters are done in a later step, based on user defined
-threshold values.
+threshold values. If a distance matrix is passed into \code{distance} the
+original algorithm described in the paper is used. If a matrix or data.frame
+is passed instead it is interpretted as point coordinates and rho will be
+estimated based on k-nearest neighbors of each point (rho is estimated as
+\code{exp(-mean(x))} where \code{x} is the distance to the nearest
+neighbors). This can be useful when data is so large that calculating the
+full distance matrix can be prohibitive.
 }
 \details{
 The function calculates rho and delta for the observations in the provided
 distance matrix. If a distance cutoff is not provided this is first estimated
-using \code{\link{estimateDc}} with default values.
+using \code{\link[=estimateDc]{estimateDc()}} with default values.
 
 The information kept in the densityCluster object is:
 \describe{
-  \item{rho}{A vector of local density values}
-  \item{delta}{A vector of minimum distances to observations of higher density}
-  \item{distance}{The initial distance matrix}
-  \item{dc}{The distance cutoff used to calculate rho}
-  \item{threshold}{A named vector specifying the threshold values for rho and delta used for cluster detection}
-  \item{peaks}{A vector of indexes specifying the cluster center for each cluster}
-  \item{clusters}{A vector of cluster affiliations for each observation. The clusters are referenced as indexes in the peaks vector}
-  \item{halo}{A logical vector specifying for each observation if it is considered part of the halo}
-  \item{knn_graph}{kNN graph constructed. It is only applicable to the case where coordinates are used as input. Currently it is set as NA.}
-  \item{nearest_higher_density_neighbor}{index for the nearest sample with higher density. It is only applicable to the case where coordinates are used as input.}
-  \item{nn.index}{indices for each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
-  \item{nn.dist}{distance to each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
+\item{\code{rho}}{A vector of local density values}
+\item{\code{delta}}{A vector of minimum distances to observations of higher density}
+\item{\code{distance}}{The initial distance matrix}
+\item{\code{dc}}{The distance cutoff used to calculate rho}
+\item{\code{threshold}}{A named vector specifying the threshold values for rho and delta used for cluster detection}
+\item{\code{peaks}}{A vector of indexes specifying the cluster center for each cluster}
+\item{\code{clusters}}{A vector of cluster affiliations for each observation. The clusters are referenced as indexes in the peaks vector}
+\item{\code{halo}}{A logical vector specifying for each observation if it is considered part of the halo}
+\item{\code{knn_graph}}{kNN graph constructed. It is only applicable to the case where coordinates are used as input. Currently it is set as NA.}
+\item{\code{nearest_higher_density_neighbor}}{index for the nearest sample with higher density. It is only applicable to the case where coordinates are used as input.}
+\item{\code{nn.index}}{indices for each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
+\item{\code{nn.dist}}{distance to each cell's k-nearest neighbors. It is only applicable for the case where coordinates are used as input.}
 }
 Before running findClusters the threshold, peaks, clusters and halo data is
-NA.
+\code{NA}.
 }
 \examples{
 irisDist <- dist(iris[,1:4])
@@ -63,8 +71,8 @@ split(iris[,5], irisClust$clusters)
 
 }
 \references{
-Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
+Rodriguez, A., & Laio, A. (2014). \emph{Clustering by fast search and find of density peaks.} Science, \strong{344}(6191), 1492-1496. doi:10.1126/science.1242072
 }
 \seealso{
-\code{\link{estimateDc}}, \code{\link{findClusters}}
+\code{\link[=estimateDc]{estimateDc()}}, \code{\link[=findClusters]{findClusters()}}
 }
