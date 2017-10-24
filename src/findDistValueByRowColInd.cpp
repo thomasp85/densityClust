@@ -12,34 +12,34 @@ using namespace Rcpp;
 //
 
 // [[Rcpp::export]]
-NumericVector findDistValueByRowColInd(NumericVector distance, size_t num_row, NumericVector row_inds,  NumericVector col_inds) {
-  size_t row_inds_len = row_inds.size();
-  size_t col_inds_len = col_inds.size();
+NumericVector findDistValueByRowColInd(NumericVector distance, int num_row, NumericVector row_inds,  NumericVector col_inds) {
+  int row_inds_len = row_inds.size();
+  int col_inds_len = col_inds.size();
   NumericVector res(row_inds_len * col_inds_len);
   
   // Rcout << "distance is " << distance  << "col_inds index is " << col_inds << std::endl; 
   // Rcout << "row_inds is " << row_inds  << "col_inds index is " << col_inds << std::endl;
   // Rcout << "col_inds_len is " << col_inds_len  << "col_inds_len index is " << col_inds_len  << "res length is " << res.size() << std::endl;
   
-  size_t i = 0;
-  size_t dist_ind; 
+  int i = 0;
+  int dist_ind; 
   
-  for (size_t row = 0; row < row_inds_len; row++) {
-    size_t row_ind = row_inds[row];
-    for (size_t col = 0; col < col_inds_len; col++) {
-      size_t col_ind = col_inds[col];
+  for (int row = 0; row < row_inds_len; row++) {
+    int row_ind = row_inds[row];
+    for (int col = 0; col < col_inds_len; col++) {
+      int col_ind = col_inds[col];
       // Rcout << "col is " << col  << "row is " << row << std::endl;
       
       if(row_ind == col_ind){
         res[i] = 0;
       }
       else{
-        size_t row_ind_new; 
-        size_t col_ind_new; 
+        int row_ind_new; 
+        int col_ind_new; 
         
         if(col_ind > row_ind) {
-          size_t row_ind_tmp = row_ind; 
-          size_t col_ind_tmp = col_ind;
+          int row_ind_tmp = row_ind; 
+          int col_ind_tmp = col_ind;
           row_ind_new = col_ind_tmp;
           col_ind_new = row_ind_tmp;
         }
@@ -73,8 +73,8 @@ NumericVector all_finite(NumericVector x) {
 
 // [[Rcpp::export]]
 List smallest_dist_rho_order_coords(NumericVector ordered_rho, NumericVector ordered_coords) {
-  size_t sample_size = ordered_rho.size();
-  size_t dim_num = ordered_coords.size() / sample_size;
+  int sample_size = ordered_rho.size();
+  int dim_num = ordered_coords.size() / sample_size;
   NumericVector smallest_dist(sample_size);
   NumericVector nearest_higher_density_sample(sample_size);
   // Rcout << "sample_size is " << sample_size << "dim_num is " << dim_num << std::endl;
@@ -84,7 +84,7 @@ List smallest_dist_rho_order_coords(NumericVector ordered_rho, NumericVector ord
   
   double current_dist;
   
-  for (size_t cell_ind = 0; cell_ind < sample_size; cell_ind ++) {
+  for (int cell_ind = 0; cell_ind < sample_size; cell_ind ++) {
     smallest_dist[cell_ind] = R_PosInf;
     nearest_higher_density_sample[cell_ind] = cell_ind;
     
@@ -98,14 +98,14 @@ List smallest_dist_rho_order_coords(NumericVector ordered_rho, NumericVector ord
       nearest_higher_density_sample[cell_ind] = maximal - all_finite_vals.begin();
     }
     
-    for (size_t higher_local_density_cell_ind = cell_ind + 1; higher_local_density_cell_ind < sample_size; higher_local_density_cell_ind ++) {
+    for (int higher_local_density_cell_ind = cell_ind + 1; higher_local_density_cell_ind < sample_size; higher_local_density_cell_ind ++) {
       // Rcout << "current cell ind is " << cell_ind  << "current cell ind with higher density is " << higher_local_density_cell_ind << std::endl;
       NumericVector source_coord(dim_num);
       NumericVector target_coord(dim_num);
       
       current_dist = 0;
       double tmp;
-      for(size_t dim_num_tmp = 0; dim_num_tmp < dim_num; dim_num_tmp ++) {
+      for(int dim_num_tmp = 0; dim_num_tmp < dim_num; dim_num_tmp ++) {
         source_coord[dim_num_tmp] = ordered_coords[cell_ind + dim_num_tmp * sample_size];
         target_coord[dim_num_tmp] = ordered_coords[higher_local_density_cell_ind + dim_num_tmp  * sample_size];
         
