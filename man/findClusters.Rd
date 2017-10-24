@@ -11,9 +11,9 @@ findClusters(x, ...)
   peaks = NULL, verbose = FALSE, ...)
 }
 \arguments{
-\item{x}{A densityCluster object as produced by \code{\link{densityClust}}}
+\item{x}{A densityCluster object as produced by \code{\link[=densityClust]{densityClust()}}}
 
-\item{...}{Additional parameters passed on to \code{\link{findClusters.densityCluster}}}
+\item{...}{Additional parameters passed on}
 
 \item{rho}{The threshold for local density when detecting cluster peaks}
 
@@ -47,8 +47,5 @@ split(iris[,5], irisClust$clusters)
 
 }
 \references{
-Rodriguez, A., & Laio, A. (2014). Clustering by fast search and find of density peaks. Science, 344(6191), 1492-1496. doi:10.1126/science.1242072
-}
-\seealso{
-\code{\link{findClusters}}
+Rodriguez, A., & Laio, A. (2014). \emph{Clustering by fast search and find of density peaks.} Science, \strong{344}(6191), 1492-1496. doi:10.1126/science.1242072
 }
