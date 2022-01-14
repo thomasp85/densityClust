@@ -47,7 +47,7 @@ NumericVector findDistValueByRowColInd(NumericVector distance, int num_row, Nume
           row_ind_new = row_ind;
           col_ind_new = col_ind;          
         }
-        dist_ind = num_row * (col_ind_new - 1) + row_ind_new - 0.5 * (1 + col_ind_new) * col_ind_new - 1;
+        dist_ind = ((unsigned long long) num_row) * (col_ind_new - 1) + row_ind_new - 0.5 * (1 + col_ind_new) * ((unsigned long long) col_ind_new) - 1;
         // if(row_ind == 3 && col_ind == 2){
         // Rcout << "num_row * (col_ind_new - 1) is " << num_row * (col_ind_new - 1)  << " 1/2 * (1 + col_ind_new) * col_ind_new is " << 0.5 * (1 + 1) * col_ind_new  << " num_row is " << num_row << " dist_ind is " << num_row * (col_ind_new - 1) + row_ind_new - 1/2 * (1 + col_ind_new) * col_ind_new - 1 << std::endl;
         
