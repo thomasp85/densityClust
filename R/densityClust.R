@@ -234,7 +234,7 @@ estimateDc <- function(distance, neighborRateLow = 0.01, neighborRateHigh = 0.02
 #' @export
 #' 
 densityClust <- function(distance, dc, gaussian=FALSE, verbose = FALSE, ...) {
-  if (class(distance) %in% c('data.frame', 'matrix')) {
+  if (is.data.frame(distance) || is.matrix(distance)) {
     dp_knn_args <- list(mat = distance, verbose = verbose, ...)
     res <- do.call(densityClust.knn, dp_knn_args)
   } else {
