@@ -316,7 +316,7 @@ plotMDS <- function(x, ...) {
 #' @importFrom graphics plot points legend
 #' @importFrom stats dist
 plotMDS.densityCluster <- function(x, ...) {
-  if (class(x$distance) %in% c('data.frame', 'matrix')) {
+  if (is.data.frame(distance) || is.matrix(distance)) {
     mds <- cmdscale(dist(x$distance))
   } else {
     mds <- cmdscale(x$distance)
@@ -366,7 +366,7 @@ plotTSNE <- function(x, ...) {
 #' @importFrom stats rnorm
 #' @importFrom Rtsne Rtsne
 plotTSNE.densityCluster <- function(x, max_components = 2, ...) {
-  if (class(x$distance) %in% c('data.frame', 'matrix')) {
+  if (is.data.frame(distance) || is.matrix(distance)) {
     data <- as.matrix(dist(x$distance))
   } else {
     data <- as.matrix(x$distance)
@@ -451,7 +451,7 @@ findClusters <- function(x, ...) {
 #' @export
 #' @importFrom graphics plot locator
 findClusters.densityCluster <- function(x, rho, delta, plot = FALSE, peaks = NULL, verbose = FALSE, ...) {
-  if (class(x$distance) %in% c('data.frame', 'matrix')) {
+  if (is.data.frame(distance) || is.matrix(distance)) {
     peak_ind <- which(x$rho > rho & x$delta > delta)
     x$peaks <- peak_ind
     
