@@ -1,4 +1,4 @@
-# densityClust (development version)
+# densityClust 0.3.2
 
 * Fix more if clauses that could lead to a logical vector instead of a scalar
 
