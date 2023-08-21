@@ -4,8 +4,16 @@
 \alias{plotDensityClust}
 \title{Plot densityCluster results}
 \usage{
-plotDensityClust(x, type = "all", n = 20, mds = NULL, dim.x = 1,
-  dim.y = 2, col = NULL, alpha = 0.8)
+plotDensityClust(
+  x,
+  type = "all",
+  n = 20,
+  mds = NULL,
+  dim.x = 1,
+  dim.y = 2,
+  col = NULL,
+  alpha = 0.8
+)
 }
 \arguments{
 \item{x}{A densityCluster object as produced by \code{\link{densityClust}}}

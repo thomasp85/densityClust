@@ -1,33 +1,37 @@
-Package: densityClust
 Type: Package
+Package: densityClust
 Title: Clustering by Fast Search and Find of Density Peaks
 Version: 0.3.2
 Authors@R: c(
-  person("Thomas Lin", "Pedersen", email = "thomasp85@gmail.com", role = c("aut", "cre")),
-  person("Sean", "Hughes", email = "", role = c("aut")),
-  person("Xiaojie", "Qiu", email = "xqiu@uw.edu", role = c("aut")))
+    person("Thomas Lin", "Pedersen", , "thomasp85@gmail.com", role = c("aut", "cre")),
+    person("Sean", "Hughes", role = "aut"),
+    person("Xiaojie", "Qiu", , "xqiu@uw.edu", role = "aut")
+  )
 Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
-Description: An improved implementation (based on k-nearest neighbors) of the 
-    density peak clustering algorithm, originally described by Alex Rodriguez 
-    and Alessandro Laio (Science, 2014 vol. 344) <DOI: 10.1126/science.1242072>. 
-    It can handle large datasets (> 100, 000 samples) very efficiently. It was 
-    initially implemented by Thomas Lin Pedersen, with inputs from Sean Hughes 
-    and later improved by Xiaojie Qiu to handle large datasets with kNNs.
+Description: An improved implementation (based on k-nearest neighbors) of
+    the density peak clustering algorithm, originally described by Alex
+    Rodriguez and Alessandro Laio (Science, 2014 vol. 344) <DOI:
+    10.1126/science.1242072>.  It can handle large datasets (> 100, 000
+    samples) very efficiently. It was initially implemented by Thomas Lin
+    Pedersen, with inputs from Sean Hughes and later improved by Xiaojie
+    Qiu to handle large datasets with kNNs.
 License: GPL (>= 2)
-Suggests:
-    testthat,
-    covr
-LinkingTo: Rcpp
+URL: https://github.com/thomasp85/densityClust
+BugReports: https://github.com/thomasp85/densityClust/issues
 Imports:
-    Rcpp, 
-    FNN, 
-    Rtsne,
+    FNN,
     ggplot2,
     ggrepel,
     grDevices,
     gridExtra,
-    RColorBrewer
-RoxygenNote: 6.0.1
+    RColorBrewer,
+    Rcpp,
+    Rtsne
+Suggests:
+    covr,
+    testthat
+LinkingTo: 
+    Rcpp
+Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-URL: https://github.com/thomasp85/densityClust
-BugReports: https://github.com/thomasp85/densityClust/issues
+RoxygenNote: 7.2.3

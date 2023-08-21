@@ -4,3 +4,5 @@
 appveyor.yml
 ^codecov\.yml$
 ^CRAN-SUBMISSION$
+^\.github$
+^README\.Rmd$

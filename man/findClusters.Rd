@@ -7,8 +7,7 @@
 \usage{
 findClusters(x, ...)
 
-\method{findClusters}{densityCluster}(x, rho, delta, plot = FALSE,
-  peaks = NULL, verbose = FALSE, ...)
+\method{findClusters}{densityCluster}(x, rho, delta, plot = FALSE, peaks = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{A densityCluster object as produced by \code{\link[=densityClust]{densityClust()}}}
