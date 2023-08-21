@@ -5,7 +5,7 @@
 
 [![R-CMD-check](https://github.com/thomasp85/densityClust/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thomasp85/densityClust/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/thomasp85/densityClust/branch/master/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/densityClust?branch=master)
+coverage](https://codecov.io/gh/thomasp85/densityClust/branch/main/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/densityClust?branch=main)
 [![CRAN_Release_Badge](http://www.r-pkg.org/badges/version-ago/densityClust)](https://CRAN.R-project.org/package=densityClust)
 [![CRAN_Download_Badge](http://cranlogs.r-pkg.org/badges/densityClust)](https://CRAN.R-project.org/package=densityClust)
 <!-- badges: end -->

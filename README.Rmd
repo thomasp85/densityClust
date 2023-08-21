@@ -6,7 +6,7 @@ output: github_document
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/thomasp85/densityClust/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thomasp85/densityClust/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/thomasp85/densityClust/branch/master/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/densityClust?branch=master)
+[![Codecov test coverage](https://codecov.io/gh/thomasp85/densityClust/branch/main/graph/badge.svg)](https://app.codecov.io/gh/thomasp85/densityClust?branch=main)
 [![CRAN\_Release\_Badge](http://www.r-pkg.org/badges/version-ago/densityClust)](https://CRAN.R-project.org/package=densityClust)
 [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/densityClust)](https://CRAN.R-project.org/package=densityClust)
 <!-- badges: end --> 
