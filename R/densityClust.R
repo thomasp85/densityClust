@@ -49,7 +49,7 @@ localDensity <- function(distance, dc, gaussian = FALSE) {
 distanceToPeak <- function(distance, rho) {
   # This implementation is faster by virtue of being written in C++.
   # It also avoids the need to convert `distance` to a matrix.
-  res <- distanceToPeakCpp(distance, rho);
+  res <- distanceToPeakCpp(as.numeric(distance), as.numeric(rho));
   names(res) <- names(rho)
   res
 }
@@ -489,7 +489,7 @@ findClusters.densityCluster <- function(x, rho, delta, plot = FALSE, peaks = NUL
         cluster[i] <- match(i, x$peaks)
       } else {
         higherDensity <- which(x$rho > x$rho[i])
-        cluster[i] <- cluster[higherDensity[which.min(findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), i, higherDensity))]] 
+        cluster[i] <- cluster[higherDensity[which.min(findDistValueByRowColInd(as.numeric(x$distance), as.integer(attr(x$distance, 'Size')), i, higherDensity))]] 
       }
     }
     x$clusters <- cluster
@@ -501,7 +501,7 @@ findClusters.densityCluster <- function(x, rho, delta, plot = FALSE, peaks = NUL
       if (verbose) message('the current index of the peak is ', i)
       
       averageRho <- outer(x$rho[cluster == i], x$rho[cluster != i], '+')/2 
-      index <- findDistValueByRowColInd(x$distance, attr(x$distance, 'Size'), which(cluster == i), which(cluster != i)) <= x$dc 
+      index <- findDistValueByRowColInd(as.numeric(x$distance), as.integer(attr(x$distance, 'Size')), which(cluster == i), which(cluster != i)) <= x$dc 
       if (any(index)) border[i] <- max(averageRho[index]) 
     }
     x$halo <- x$rho < border[cluster] 

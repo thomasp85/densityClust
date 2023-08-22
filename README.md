@@ -44,54 +44,50 @@ interactively by clicking on a decision plot.
 library(densityClust)
 irisDist <- dist(iris[,1:4])
 irisClust <- densityClust(irisDist, gaussian=TRUE)
-```
-
-    ## Distance cutoff calculated to 0.2767655
-
-``` r
+#> Distance cutoff calculated to 0.2767655
 plot(irisClust) # Inspect clustering attributes to define thresholds
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
 ``` r
+
 irisClust <- findClusters(irisClust, rho=2, delta=2)
 plotMDS(irisClust)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-1-2.png)<!-- -->
+<img src="man/figures/README-unnamed-chunk-2-2.png" width="100%" />
 
 ``` r
 split(iris[,5], irisClust$clusters)
+#> $`1`
+#>  [1] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
+#> [11] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
+#> [21] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
+#> [31] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
+#> [41] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
+#> Levels: setosa versicolor virginica
+#> 
+#> $`2`
+#>   [1] versicolor versicolor versicolor versicolor versicolor versicolor
+#>   [7] versicolor versicolor versicolor versicolor versicolor versicolor
+#>  [13] versicolor versicolor versicolor versicolor versicolor versicolor
+#>  [19] versicolor versicolor versicolor versicolor versicolor versicolor
+#>  [25] versicolor versicolor versicolor versicolor versicolor versicolor
+#>  [31] versicolor versicolor versicolor versicolor versicolor versicolor
+#>  [37] versicolor versicolor versicolor versicolor versicolor versicolor
+#>  [43] versicolor versicolor versicolor versicolor versicolor versicolor
+#>  [49] versicolor versicolor virginica  virginica  virginica  virginica 
+#>  [55] virginica  virginica  virginica  virginica  virginica  virginica 
+#>  [61] virginica  virginica  virginica  virginica  virginica  virginica 
+#>  [67] virginica  virginica  virginica  virginica  virginica  virginica 
+#>  [73] virginica  virginica  virginica  virginica  virginica  virginica 
+#>  [79] virginica  virginica  virginica  virginica  virginica  virginica 
+#>  [85] virginica  virginica  virginica  virginica  virginica  virginica 
+#>  [91] virginica  virginica  virginica  virginica  virginica  virginica 
+#>  [97] virginica  virginica  virginica  virginica 
+#> Levels: setosa versicolor virginica
 ```
-
-    ## $`1`
-    ##  [1] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
-    ## [11] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
-    ## [21] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
-    ## [31] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
-    ## [41] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa
-    ## Levels: setosa versicolor virginica
-    ## 
-    ## $`2`
-    ##   [1] versicolor versicolor versicolor versicolor versicolor versicolor
-    ##   [7] versicolor versicolor versicolor versicolor versicolor versicolor
-    ##  [13] versicolor versicolor versicolor versicolor versicolor versicolor
-    ##  [19] versicolor versicolor versicolor versicolor versicolor versicolor
-    ##  [25] versicolor versicolor versicolor versicolor versicolor versicolor
-    ##  [31] versicolor versicolor versicolor versicolor versicolor versicolor
-    ##  [37] versicolor versicolor versicolor versicolor versicolor versicolor
-    ##  [43] versicolor versicolor versicolor versicolor versicolor versicolor
-    ##  [49] versicolor versicolor virginica  virginica  virginica  virginica 
-    ##  [55] virginica  virginica  virginica  virginica  virginica  virginica 
-    ##  [61] virginica  virginica  virginica  virginica  virginica  virginica 
-    ##  [67] virginica  virginica  virginica  virginica  virginica  virginica 
-    ##  [73] virginica  virginica  virginica  virginica  virginica  virginica 
-    ##  [79] virginica  virginica  virginica  virginica  virginica  virginica 
-    ##  [85] virginica  virginica  virginica  virginica  virginica  virginica 
-    ##  [91] virginica  virginica  virginica  virginica  virginica  virginica 
-    ##  [97] virginica  virginica  virginica  virginica 
-    ## Levels: setosa versicolor virginica
 
 Note that while the iris dataset contains information on three different
 species of iris, only two clusters are detected by the algorithm. This

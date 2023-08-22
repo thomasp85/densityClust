@@ -11,6 +11,15 @@ output: github_document
 [![CRAN\_Download\_Badge](http://cranlogs.r-pkg.org/badges/densityClust)](https://CRAN.R-project.org/package=densityClust)
 <!-- badges: end --> 
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
 This package implement the clustering algorithm described by Alex Rodriguez and Alessandro Laio (2014). It provides the user with tools for generating the initial rho and delta values for each observation as well as using these to assign observations to clusters. This is done in two passes so the user is free to reassign observations to clusters using a new set of rho and delta thresholds, without needing to recalculate everything.
 
 ## Plotting

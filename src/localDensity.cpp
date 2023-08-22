@@ -1,10 +1,9 @@
-#include <Rcpp.h>
-using namespace Rcpp;
+#include <cpp11/doubles.hpp>
 
-// [[Rcpp::export]]
-NumericVector gaussianLocalDensity(NumericVector distance, int nrow, double dc) {
+[[cpp11::register]]
+cpp11::writable::doubles gaussianLocalDensity(cpp11::doubles distance, int nrow, double dc) {
   int size = distance.size();
-  NumericVector half(size);
+  cpp11::writable::doubles half(size);
   for (int i = 0; i < size; i++) {
     double combOver = distance[i] / dc;
     double negSq = pow(combOver, 2) * -1;
@@ -12,11 +11,15 @@ NumericVector gaussianLocalDensity(NumericVector distance, int nrow, double dc) 
   }     
   int ncol = nrow;
   
-  NumericVector result(nrow);
+  cpp11::writable::doubles result(nrow);
+  std::fill(result.begin(), result.end(), 0.0);
   
   int i = 0;
   for (int col = 0; col < ncol; col++) {
     for (int row = col + 1; row < nrow; row++) {
+      if(i > distance.size()){
+        break;
+      }
       double temp = half[i];
       result[row] += temp;
       result[col] += temp;
@@ -27,20 +30,16 @@ NumericVector gaussianLocalDensity(NumericVector distance, int nrow, double dc) 
   return result;
 }
 
-// [[Rcpp::export]]
-NumericVector nonGaussianLocalDensity(NumericVector distance, int nrow, double dc) {
+[[cpp11::register]]
+cpp11::writable::doubles nonGaussianLocalDensity(cpp11::doubles distance, int nrow, double dc) {
   int ncol = nrow;
-  NumericVector result(nrow);
+  cpp11::writable::doubles result(nrow);
+  std::fill(result.begin(), result.end(), 0.0);
   int i = 0;
   for (int col = 0; col < ncol; col++) {
     for (int row = col + 1; row < nrow; row++) {
-      if((i % 10000) == 0){
-        // if(verbose){
-        // Rcout << "index is " << i << " distance under the current index " << distance[i] << std::endl;
-        // }
-      }
       if(i > distance.size()){
-        // Rcout << "Warning: index is larger than the length of the distance vector" << distance[i] << std::endl;
+        break;
       }
       if (distance[i] < dc) {
         result[row] += 1;
@@ -51,8 +50,5 @@ NumericVector nonGaussianLocalDensity(NumericVector distance, int nrow, double d
       i++;
     }
   }
-  // if(verbose){
-  //  Rcout << "last index is " << i << " length of distance is " << distance.size() << "number of rows is " << nrow << "number of columns is " << ncol << std::endl;
-  // }
   return result;
 }

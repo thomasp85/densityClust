@@ -34,7 +34,7 @@
 #' split(iris[,5], irisClust$clusters)
 #'
 #' @seealso [densityClust()], [findClusters()], [plotMDS()]
-#' @aliases NULL
+#' @aliases densityClust-package
 #'
 #' @references Rodriguez, A., & Laio, A. (2014). *Clustering by fast search and find of density peaks.* Science, **344**(6191), 1492-1496. doi:10.1126/science.1242072
 #' 
@@ -42,7 +42,6 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @useDynLib densityClust
-#' @importFrom Rcpp sourceCpp
+#' @useDynLib densityClust, .registration = TRUE
 ## usethis namespace: end
 NULL
