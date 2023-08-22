@@ -6,3 +6,4 @@ appveyor.yml
 ^CRAN-SUBMISSION$
 ^\.github$
 ^README\.Rmd$
+^cran-comments\.md$
