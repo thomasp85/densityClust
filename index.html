@@ -93,44 +93,44 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/thomasp85/densityClust" class="external-link">densityClust</a></span><span class="op">)</span></span>
 <span><span class="va">irisDist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">irisClust</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/densityClust.html">densityClust</a></span><span class="op">(</span><span class="va">irisDist</span>, gaussian<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Distance cutoff calculated to 0.2767655</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">irisClust</span><span class="op">)</span> <span class="co"># Inspect clustering attributes to define thresholds</span></span></code></pre></div>
-<p><img src="README_files/figure-gfm/unnamed-chunk-1-1.png"><!-- --></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">irisClust</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/findClusters.html">findClusters</a></span><span class="op">(</span><span class="va">irisClust</span>, rho<span class="op">=</span><span class="fl">2</span>, delta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">irisClust</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/densityClust.html">densityClust</a></span><span class="op">(</span><span class="va">irisDist</span>, gaussian<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Distance cutoff calculated to 0.2767655</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">irisClust</span><span class="op">)</span> <span class="co"># Inspect clustering attributes to define thresholds</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">irisClust</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/findClusters.html">findClusters</a></span><span class="op">(</span><span class="va">irisClust</span>, rho<span class="op">=</span><span class="fl">2</span>, delta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/plotMDS.html">plotMDS</a></span><span class="op">(</span><span class="va">irisClust</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-gfm/unnamed-chunk-1-2.png"><!-- --></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span>, <span class="va">irisClust</span><span class="op">$</span><span class="va">clusters</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## $`1`</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">## [11] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [21] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [31] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [41] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Levels: setosa versicolor virginica</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="do">## $`2`</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="do">##   [1] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="do">##   [7] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  [13] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="do">##  [19] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  [25] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="do">##  [31] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="do">##  [37] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="do">##  [43] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="do">##  [49] versicolor versicolor virginica  virginica  virginica  virginica </span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="do">##  [55] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="do">##  [61] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="do">##  [67] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="do">##  [73] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="do">##  [79] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="do">##  [85] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="do">##  [91] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="do">##  [97] virginica  virginica  virginica  virginica </span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="do">## Levels: setosa versicolor virginica</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-2-2.png" width="100%"></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">iris</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span>, <span class="va">irisClust</span><span class="op">$</span><span class="va">clusters</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $`1`</span></span>
+<span><span class="co">#&gt;  [1] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
+<span><span class="co">#&gt; [11] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
+<span><span class="co">#&gt; [21] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
+<span><span class="co">#&gt; [31] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
+<span><span class="co">#&gt; [41] setosa setosa setosa setosa setosa setosa setosa setosa setosa setosa</span></span>
+<span><span class="co">#&gt; Levels: setosa versicolor virginica</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $`2`</span></span>
+<span><span class="co">#&gt;   [1] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
+<span><span class="co">#&gt;   [7] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
+<span><span class="co">#&gt;  [13] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
+<span><span class="co">#&gt;  [19] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
+<span><span class="co">#&gt;  [25] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
+<span><span class="co">#&gt;  [31] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
+<span><span class="co">#&gt;  [37] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
+<span><span class="co">#&gt;  [43] versicolor versicolor versicolor versicolor versicolor versicolor</span></span>
+<span><span class="co">#&gt;  [49] versicolor versicolor virginica  virginica  virginica  virginica </span></span>
+<span><span class="co">#&gt;  [55] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
+<span><span class="co">#&gt;  [61] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
+<span><span class="co">#&gt;  [67] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
+<span><span class="co">#&gt;  [73] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
+<span><span class="co">#&gt;  [79] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
+<span><span class="co">#&gt;  [85] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
+<span><span class="co">#&gt;  [91] virginica  virginica  virginica  virginica  virginica  virginica </span></span>
+<span><span class="co">#&gt;  [97] virginica  virginica  virginica  virginica </span></span>
+<span><span class="co">#&gt; Levels: setosa versicolor virginica</span></span></code></pre></div>
 <p>Note that while the iris dataset contains information on three different species of iris, only two clusters are detected by the algorithm. This is because two of the species (versicolor and virginica) are not clearly seperated by their data.</p>
 </div>
 <div class="section level2">
