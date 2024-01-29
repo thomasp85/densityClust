@@ -10,11 +10,10 @@ Authors@R: c(
 Maintainer: Thomas Lin Pedersen <thomasp85@gmail.com>
 Description: An improved implementation (based on k-nearest neighbors) of
     the density peak clustering algorithm, originally described by Alex
-    Rodriguez and Alessandro Laio (Science, 2014 vol. 344) <DOI:
-    10.1126/science.1242072>.  It can handle large datasets (> 100, 000
-    samples) very efficiently. It was initially implemented by Thomas Lin
-    Pedersen, with inputs from Sean Hughes and later improved by Xiaojie
-    Qiu to handle large datasets with kNNs.
+    Rodriguez and Alessandro Laio (Science, 2014 vol. 344). It can handle large 
+    datasets (> 100,000 samples) very efficiently. It was initially implemented 
+    by Thomas Lin Pedersen, with inputs from Sean Hughes and later improved by 
+    Xiaojie Qiu to handle large datasets with kNNs.
 License: GPL (>= 2)
 URL: https://github.com/thomasp85/densityClust
 BugReports: https://github.com/thomasp85/densityClust/issues
@@ -33,5 +32,4 @@ LinkingTo:
     cpp11
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
-SystemRequirements: C++11
+RoxygenNote: 7.3.1

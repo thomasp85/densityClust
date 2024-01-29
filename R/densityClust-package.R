@@ -34,7 +34,6 @@
 #' split(iris[,5], irisClust$clusters)
 #'
 #' @seealso [densityClust()], [findClusters()], [plotMDS()]
-#' @aliases densityClust-package
 #'
 #' @references Rodriguez, A., & Laio, A. (2014). *Clustering by fast search and find of density peaks.* Science, **344**(6191), 1492-1496. doi:10.1126/science.1242072
 #' 

@@ -3,7 +3,6 @@
 \docType{package}
 \name{densityClust-package}
 \alias{densityClust-package}
-\alias{_PACKAGE}
 \title{Clustering by fast search and find of density peaks}
 \description{
 This package implement the clustering algorithm described by Alex Rodriguez
